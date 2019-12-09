@@ -123,6 +123,8 @@ const (
 	DefaultHTTPPort                   = 80
 	DefaultHTTPSPort                  = 443
 	DefaultNetworkMode                = "hostNetwork"
+
+	DefaultServiceKubeproxyEnabled = true
 )
 
 var (
@@ -301,6 +303,12 @@ func (c *Cluster) setClusterServicesDefaults() {
 	if c.Services.Etcd.Snapshot == nil {
 		defaultSnapshot := DefaultEtcdSnapshot
 		c.Services.Etcd.Snapshot = &defaultSnapshot
+	}
+
+	// enable kubeproxy by default
+	if c.Services.Kubeproxy.Enabled == nil {
+		defaultServiceKubeproxyEnabled := DefaultServiceKubeproxyEnabled
+		c.Services.Kubeproxy.Enabled = &defaultServiceKubeproxyEnabled
 	}
 
 	serviceConfigDefaultsMap := map[*string]string{

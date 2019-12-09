@@ -352,8 +352,10 @@ func restartComponentsWhenCertChanges(ctx context.Context, currentCluster, kubeC
 		pki.APIProxyClientCertName:     []services.RestartFunc{services.RestartKubeAPI},
 		pki.KubeControllerCertName:     []services.RestartFunc{services.RestartKubeController},
 		pki.KubeSchedulerCertName:      []services.RestartFunc{services.RestartScheduler},
-		pki.KubeProxyCertName:          []services.RestartFunc{services.RestartKubeproxy},
 		pki.KubeNodeCertName:           []services.RestartFunc{services.RestartKubelet},
+	}
+	if *kubeCluster.Services.Kubeproxy.Enabled {
+		AllCertsFuncMap[pki.KubeProxyCertName] = []services.RestartFunc{services.RestartKubeproxy}
 	}
 	for certName, changed := range AllCertsMap {
 		if changed {

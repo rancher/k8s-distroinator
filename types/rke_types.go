@@ -344,6 +344,9 @@ type KubeletService struct {
 type KubeproxyService struct {
 	// Base service properties
 	BaseService `yaml:",inline" json:",inline"`
+
+	// Enabled
+	Enabled *bool `yaml:"enabled" json:"enabled,omitempty" norman:"default=false"`
 }
 
 type SchedulerService struct {
