@@ -163,6 +163,8 @@ type RKESystemImages struct {
 	WeaveNode string `yaml:"weave_node" json:"weaveNode,omitempty"`
 	// Weave CNI image
 	WeaveCNI string `yaml:"weave_cni" json:"weaveCni,omitempty"`
+	// Kube Router CNI image
+	KubeRouterCNI string `yaml:"kube_router_cni" json:"kubeRouterCni,omitempty"`
 	// Pod infra container image
 	PodInfraContainer string `yaml:"pod_infra_container" json:"podInfraContainer,omitempty"`
 	// Ingress Controller image
@@ -344,9 +346,8 @@ type KubeletService struct {
 type KubeproxyService struct {
 	// Base service properties
 	BaseService `yaml:",inline" json:",inline"`
-
 	// Enabled
-	Enabled *bool `yaml:"enabled" json:"enabled,omitempty" norman:"default=false"`
+	Enabled *bool `yaml:"enabled" json:"enabled,omitempty" norman:"default=true"`
 }
 
 type SchedulerService struct {
@@ -390,6 +391,8 @@ type NetworkConfig struct {
 	WeaveNetworkProvider *WeaveNetworkProvider `yaml:"weave_network_provider,omitempty" json:"weaveNetworkProvider,omitempty"`
 	// AciNetworkProvider
 	AciNetworkProvider *AciNetworkProvider `yaml:"aci_network_provider,omitempty" json:"aciNetworkProvider,omitempty"`
+	// KubeRouterNetworkProvider
+	KubeRouterNetworkProvider *KubeRouterNetworkProvider `yaml:"kube_router_provider,omitempty" json:"kubeRouterNetworkProvider,omitempty"`
 	// NodeSelector key pair
 	NodeSelector map[string]string `yaml:"node_selector" json:"nodeSelector,omitempty"`
 	// Network plugin daemonset upgrade strategy
@@ -637,6 +640,11 @@ type AciNetworkProvider struct {
 	RunGbpContainer          string   `yaml:"run_gbp_container,omitempty" json:"runGbpContainer,omitempty"`
 	RunOpflexServerContainer string   `yaml:"run_opflex_server_container,omitempty" json:"runOpflexServerContainer,omitempty"`
 	OpflexServerPort         string   `yaml:"opflex_server_port,omitempty" json:"opflexServerPort,omitempty"`
+}
+
+type KubeRouterNetworkProvider struct {
+	RunServiceProxy *bool `yaml:"run_service_proxy" json:"runServiceProxy,omitempty"`
+	RunFirewall     *bool `yaml:"run_firewall" json:"runFirewall,omitempty"`
 }
 
 type KubernetesServicesOptions struct {

@@ -468,7 +468,8 @@ func (c *Cluster) deployWithKubectl(ctx context.Context, addonYaml string) error
 }
 
 func (c *Cluster) doAddonDeploy(ctx context.Context, addonYaml, resourceName string, isCritical bool) error {
-	if c.UseKubectlDeploy {
+	if c.UseKubectlDeploy || (resourceName == NetworkPluginResourceName && !*c.Services.Kubeproxy.Enabled) {
+		// deploy via local kubectl if specified or if this is a network plugin and kubeproxy is disabled
 		if err := c.deployWithKubectl(ctx, addonYaml); err != nil {
 			return &addonError{fmt.Sprintf("%v", err), isCritical}
 		}

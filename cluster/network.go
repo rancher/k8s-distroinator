@@ -78,6 +78,10 @@ const (
 	WeaveNetworkAppName              = "weave-net"
 	WeaveNetPriorityClassNameKeyName = "weave_net_priority_class_name"
 
+	KubeRouterNetworkPlugin   = "kube-router"
+	KubeRouterRunServiceProxy = "kube_router_run_service_proxy"
+	KubeRouterRunFirewall     = "kube_router_run_firewall"
+
 	AciNetworkPlugin            = "aci"
 	AciOVSMemoryLimit           = "aci_ovs_memory_limit"
 	AciImagePullPolicy          = "aci_image_pull_policy"
@@ -186,6 +190,8 @@ const (
 	MTU                                    = "MTU"
 	RBACConfig                             = "RBACConfig"
 	ClusterVersion                         = "ClusterVersion"
+	RunServiceProxy                        = "RunServiceProxy" // for CNIs which can replace kube-proxy as the cluster service proxy
+	RunFirewall                            = "RunFirewall"
 	SystemIdentifier                       = "SystemIdentifier"
 	ApicHosts                              = "ApicHosts"
 	Token                                  = "Token"
@@ -303,6 +309,8 @@ func (c *Cluster) deployNetworkPlugin(ctx context.Context, data map[string]inter
 		return c.doWeaveDeploy(ctx, data)
 	case AciNetworkPlugin:
 		return c.doAciDeploy(ctx, data)
+	case KubeRouterNetworkPlugin:
+		return c.doKubeRouterDeploy(ctx, data)
 	case NoNetworkPlugin:
 		log.Infof(ctx, "[network] Not deploying a cluster network, expecting custom CNI")
 		return nil
@@ -449,6 +457,23 @@ func (c *Cluster) doWeaveDeploy(ctx context.Context, data map[string]interface{}
 	return c.doAddonDeploy(ctx, pluginYaml, NetworkPluginResourceName, true)
 }
 
+func (c *Cluster) doKubeRouterDeploy(ctx context.Context, data map[string]interface{}) error {
+
+	kubeRouterConfig := map[string]interface{}{
+		ClusterCIDR:     c.ClusterCIDR,
+		CNIImage:        c.SystemImages.KubeRouterCNI,
+		RunServiceProxy: c.Network.Options[KubeRouterRunServiceProxy],
+		RunFirewall:     c.Network.Options[KubeRouterRunFirewall],
+		APIRoot:         "https://127.0.0.1:6443/",
+		// TODO: @iwilltry42 add more config options
+	}
+	pluginYaml, err := c.getNetworkPluginManifest(kubeRouterConfig, data)
+	if err != nil {
+		return err
+	}
+	return c.doAddonDeploy(ctx, pluginYaml, NetworkPluginResourceName, true)
+}
+
 func (c *Cluster) doAciDeploy(ctx context.Context, data map[string]interface{}) error {
 	_, clusterCIDR, err := net.ParseCIDR(c.ClusterCIDR)
 	if err != nil {
@@ -565,7 +590,7 @@ func (c *Cluster) doAciDeploy(ctx context.Context, data map[string]interface{}) 
 
 func (c *Cluster) getNetworkPluginManifest(pluginConfig, data map[string]interface{}) (string, error) {
 	switch c.Network.Plugin {
-	case CanalNetworkPlugin, FlannelNetworkPlugin, CalicoNetworkPlugin, WeaveNetworkPlugin, AciNetworkPlugin:
+	case CanalNetworkPlugin, FlannelNetworkPlugin, CalicoNetworkPlugin, WeaveNetworkPlugin, AciNetworkPlugin, KubeRouterNetworkPlugin:
 		tmplt, err := templates.GetVersionedTemplates(c.Network.Plugin, data, c.Version)
 		if err != nil {
 			return "", err
