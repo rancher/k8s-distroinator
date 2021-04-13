@@ -8,6 +8,9 @@ import (
 	configv1 "k8s.io/apiserver/pkg/apis/config/v1"
 )
 
+// NumberStringMap is an alias for a map that allows for integers as values when read from JSON or YAML
+type NumberStringMap = map[string]string
+
 type RancherKubernetesEngineConfig struct {
 	// Kubernetes nodes
 	Nodes []RKEConfigNode `yaml:"nodes,omitempty" json:"nodes,omitempty"`
@@ -359,7 +362,7 @@ type BaseService struct {
 	// Docker image of the service
 	Image string `yaml:"image,omitempty" json:"image,omitempty"`
 	// Extra arguments that are added to the services
-	ExtraArgs map[string]string `yaml:"extra_args,omitempty" json:"extraArgs,omitempty"`
+	ExtraArgs NumberStringMap `yaml:"extra_args,omitempty" json:"extraArgs,omitempty"`
 	// Extra binds added to the nodes
 	ExtraBinds []string `yaml:"extra_binds,omitempty" json:"extraBinds,omitempty"`
 	// this is to provide extra env variable to the docker container running kubernetes service
@@ -367,7 +370,7 @@ type BaseService struct {
 
 	// Windows nodes only of the same as the above
 	// Extra arguments that are added to the services
-	WindowsExtraArgs map[string]string `yaml:"win_extra_args,omitempty" json:"winExtraArgs,omitempty"`
+	WindowsExtraArgs NumberStringMap `yaml:"win_extra_args,omitempty" json:"winExtraArgs,omitempty"`
 	// Extra binds added to the nodes
 	WindowsExtraBinds []string `yaml:"win_extra_binds,omitempty" json:"winExtraBinds,omitempty"`
 	// this is to provide extra env variable to the docker container running kubernetes service
@@ -378,7 +381,7 @@ type NetworkConfig struct {
 	// Network Plugin That will be used in kubernetes cluster
 	Plugin string `yaml:"plugin,omitempty" json:"plugin,omitempty" norman:"default=canal"`
 	// Plugin options to configure network properties
-	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
+	Options NumberStringMap `yaml:"options,omitempty" json:"options,omitempty"`
 	// Set MTU for CNI provider
 	MTU int `yaml:"mtu,omitempty" json:"mtu,omitempty"`
 	// CalicoNetworkProvider
@@ -427,11 +430,11 @@ type IngressConfig struct {
 	Provider string `yaml:"provider,omitempty" json:"provider,omitempty" norman:"default=nginx"`
 	// These options are NOT for configuring Ingress's addon template.
 	// They are used for its ConfigMap options specifically.
-	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
+	Options NumberStringMap `yaml:"options,omitempty" json:"options,omitempty"`
 	// NodeSelector key pair
 	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Ingress controller extra arguments
-	ExtraArgs map[string]string `yaml:"extra_args,omitempty" json:"extraArgs,omitempty"`
+	ExtraArgs NumberStringMap `yaml:"extra_args,omitempty" json:"extraArgs,omitempty"`
 	// DNS Policy
 	DNSPolicy string `yaml:"dns_policy,omitempty" json:"dnsPolicy,omitempty"`
 	// Extra Env vars
@@ -642,17 +645,17 @@ type AciNetworkProvider struct {
 
 type KubernetesServicesOptions struct {
 	// Additional options passed to Etcd
-	Etcd map[string]string `json:"etcd"`
+	Etcd NumberStringMap `json:"etcd"`
 	// Additional options passed to KubeAPI
-	KubeAPI map[string]string `json:"kubeapi"`
+	KubeAPI NumberStringMap `json:"kubeapi"`
 	// Additional options passed to Kubelet
-	Kubelet map[string]string `json:"kubelet"`
+	Kubelet NumberStringMap `json:"kubelet"`
 	// Additional options passed to Kubeproxy
-	Kubeproxy map[string]string `json:"kubeproxy"`
+	Kubeproxy NumberStringMap `json:"kubeproxy"`
 	// Additional options passed to KubeController
-	KubeController map[string]string `json:"kubeController"`
+	KubeController NumberStringMap `json:"kubeController"`
 	// Additional options passed to Scheduler
-	Scheduler map[string]string `json:"scheduler"`
+	Scheduler NumberStringMap `json:"scheduler"`
 }
 
 // VsphereCloudProvider options
@@ -906,7 +909,7 @@ type MonitoringConfig struct {
 	Provider string `yaml:"provider,omitempty" json:"provider,omitempty" norman:"default=metrics-server"`
 	// These options are NOT for configuring the Metrics-Server's addon template.
 	// They are used to pass command args to the metric-server's deployment containers specifically.
-	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
+	Options NumberStringMap `yaml:"options,omitempty" json:"options,omitempty"`
 	// NodeSelector key pair
 	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Update strategy
@@ -934,7 +937,7 @@ type DNSConfig struct {
 	// DNS provider
 	Provider string `yaml:"provider,omitempty" json:"provider,omitempty"`
 	// DNS config options
-	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
+	Options NumberStringMap `yaml:"options,omitempty" json:"options,omitempty"`
 	// Upstream nameservers
 	UpstreamNameservers []string `yaml:"upstreamnameservers,omitempty" json:"upstreamnameservers,omitempty"`
 	// ReverseCIDRs
