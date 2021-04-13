@@ -84,7 +84,7 @@ type BastionHost struct {
 	// Address of Bastion Host
 	Address string `yaml:"address,omitempty" json:"address,omitempty"`
 	// SSH Port of Bastion Host
-	Port string `yaml:"port,omitempty" json:"port,omitempty"`
+	Port string `yaml:"port,omitempty" json:"port,omitempty" jsonschema:"oneof_type=string;number"`
 	// ssh User to Bastion Host
 	User string `yaml:"user,omitempty" json:"user,omitempty"`
 	// SSH Agent Auth enable
@@ -201,7 +201,7 @@ type RKEConfigNode struct {
 	// IP or FQDN that is fully resolvable and used for SSH communication
 	Address string `yaml:"address,omitempty" json:"address,omitempty"`
 	// Port used for SSH communication
-	Port string `yaml:"port,omitempty" json:"port,omitempty"`
+	Port string `yaml:"port,omitempty" json:"port,omitempty" jsonschema:"oneof_type=string;number"`
 	// Optional - Internal address that will be used for components communication
 	InternalAddress string `yaml:"internal_address,omitempty" json:"internalAddress,omitempty"`
 	// Node role in kubernetes cluster (controlplane, worker, or etcd)
@@ -443,9 +443,9 @@ type IngressConfig struct {
 	// nginx daemonset upgrade strategy
 	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy,omitempty" json:"updateStrategy,omitempty"`
 	// Http port for ingress controller daemonset
-	HTTPPort int `yaml:"http_port,omitempty" json:"httpPort,omitempty"`
+	HTTPPort int `yaml:"http_port,omitempty" json:"httpPort,omitempty" jsonschema:"oneof_type=string;number"`
 	// Https port for ingress controller daemonset
-	HTTPSPort int `yaml:"https_port,omitempty" json:"httpsPort,omitempty"`
+	HTTPSPort int `yaml:"https_port,omitempty" json:"httpsPort,omitempty" jsonschema:"oneof_type=string;number"`
 	// NetworkMode selector for ingress controller pods. Default is HostNetwork
 	NetworkMode string `yaml:"network_mode,omitempty" json:"networkMode,omitempty"`
 	// Tolerations for Deployments
@@ -620,9 +620,9 @@ type AciNetworkProvider struct {
 	SnatNamespace            string   `yaml:"snat_namespace,omitempty" json:"snatNamespace,omitempty"`
 	EpRegistry               string   `yaml:"ep_registry,omitempty" json:"epRegistry,omitempty"`
 	OpflexMode               string   `yaml:"opflex_mode,omitempty" json:"opflexMode,omitempty"`
-	SnatPortRangeStart       string   `yaml:"snat_port_range_start,omitempty" json:"snatPortRangeStart,omitempty"`
-	SnatPortRangeEnd         string   `yaml:"snat_port_range_end,omitempty" json:"snatPortRangeEnd,omitempty"`
-	SnatPortsPerNode         string   `yaml:"snat_ports_per_node,omitempty" json:"snatPortsPerNode,omitempty"`
+	SnatPortRangeStart       string   `yaml:"snat_port_range_start,omitempty" json:"snatPortRangeStart,omitempty" jsonschema:"oneof_type=string;number"`
+	SnatPortRangeEnd         string   `yaml:"snat_port_range_end,omitempty" json:"snatPortRangeEnd,omitempty" jsonschema:"oneof_type=string;number"`
+	SnatPortsPerNode         string   `yaml:"snat_ports_per_node,omitempty" json:"snatPortsPerNode,omitempty" jsonschema:"oneof_type=string;number"`
 	OpflexClientSSL          string   `yaml:"opflex_client_ssl,omitempty" json:"opflexClientSsl,omitempty"`
 	UsePrivilegedContainer   string   `yaml:"use_privileged_container,omitempty" json:"usePrivilegedContainer,omitempty"`
 	UseHostNetnsVolume       string   `yaml:"use_host_netns_volume,omitempty" json:"useHostNetnsVolume,omitempty"`
@@ -637,7 +637,7 @@ type AciNetworkProvider struct {
 	GbpPodSubnet             string   `yaml:"gbp_pod_subnet,omitempty" json:"gbpPodSubnet,omitempty"`
 	RunGbpContainer          string   `yaml:"run_gbp_container,omitempty" json:"runGbpContainer,omitempty"`
 	RunOpflexServerContainer string   `yaml:"run_opflex_server_container,omitempty" json:"runOpflexServerContainer,omitempty"`
-	OpflexServerPort         string   `yaml:"opflex_server_port,omitempty" json:"opflexServerPort,omitempty"`
+	OpflexServerPort         string   `yaml:"opflex_server_port,omitempty" json:"opflexServerPort,omitempty" jsonschema:"oneof_type=string;number"`
 }
 
 type KubernetesServicesOptions struct {
@@ -668,7 +668,7 @@ type GlobalVsphereOpts struct {
 	User              string `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
 	Password          string `json:"password,omitempty" yaml:"password,omitempty" ini:"password,omitempty" norman:"type=password"`
 	VCenterIP         string `json:"server,omitempty" yaml:"server,omitempty" ini:"server,omitempty"`
-	VCenterPort       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
+	VCenterPort       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty" jsonschema:"oneof_type=string;number"`
 	InsecureFlag      bool   `json:"insecure-flag,omitempty" yaml:"insecure-flag,omitempty" ini:"insecure-flag,omitempty"`
 	Datacenter        string `json:"datacenter,omitempty" yaml:"datacenter,omitempty" ini:"datacenter,omitempty"`
 	Datacenters       string `json:"datacenters,omitempty" yaml:"datacenters,omitempty" ini:"datacenters,omitempty"`
@@ -682,7 +682,7 @@ type GlobalVsphereOpts struct {
 type VirtualCenterConfig struct {
 	User              string `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
 	Password          string `json:"password,omitempty" yaml:"password,omitempty" ini:"password,omitempty" norman:"type=password"`
-	VCenterPort       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
+	VCenterPort       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty" jsonschema:"oneof_type=string;number"`
 	Datacenters       string `json:"datacenters,omitempty" yaml:"datacenters,omitempty" ini:"datacenters,omitempty"`
 	RoundTripperCount int    `json:"soap-roundtrip-count,omitempty" yaml:"soap-roundtrip-count,omitempty" ini:"soap-roundtrip-count,omitempty"`
 }
