@@ -10,59 +10,59 @@ import (
 
 type RancherKubernetesEngineConfig struct {
 	// Kubernetes nodes
-	Nodes []RKEConfigNode `yaml:"nodes" json:"nodes,omitempty"`
+	Nodes []RKEConfigNode `yaml:"nodes,omitempty" json:"nodes,omitempty"`
 	// Kubernetes components
-	Services RKEConfigServices `yaml:"services" json:"services,omitempty"`
+	Services RKEConfigServices `yaml:"services,omitempty" json:"services,omitempty"`
 	// Network configuration used in the kubernetes cluster (flannel, calico)
-	Network NetworkConfig `yaml:"network" json:"network,omitempty"`
+	Network NetworkConfig `yaml:"network,omitempty" json:"network,omitempty"`
 	// Authentication configuration used in the cluster (default: x509)
-	Authentication AuthnConfig `yaml:"authentication" json:"authentication,omitempty"`
+	Authentication AuthnConfig `yaml:"authentication,omitempty" json:"authentication,omitempty"`
 	// YAML manifest for user provided addons to be deployed on the cluster
-	Addons string `yaml:"addons" json:"addons,omitempty"`
+	Addons string `yaml:"addons,omitempty" json:"addons,omitempty"`
 	// List of urls or paths for addons
-	AddonsInclude []string `yaml:"addons_include" json:"addonsInclude,omitempty"`
+	AddonsInclude []string `yaml:"addons_include,omitempty" json:"addonsInclude,omitempty"`
 	// List of images used internally for proxy, cert download and kubedns
-	SystemImages RKESystemImages `yaml:"system_images" json:"systemImages,omitempty"`
+	SystemImages RKESystemImages `yaml:"system_images,omitempty" json:"systemImages,omitempty"`
 	// SSH Private Key Path
-	SSHKeyPath string `yaml:"ssh_key_path" json:"sshKeyPath,omitempty" norman:"nocreate,noupdate"`
+	SSHKeyPath string `yaml:"ssh_key_path,omitempty" json:"sshKeyPath,omitempty" norman:"nocreate,noupdate"`
 	// SSH Certificate Path
-	SSHCertPath string `yaml:"ssh_cert_path" json:"sshCertPath,omitempty" norman:"nocreate,noupdate"`
+	SSHCertPath string `yaml:"ssh_cert_path,omitempty" json:"sshCertPath,omitempty" norman:"nocreate,noupdate"`
 	// SSH Agent Auth enable
-	SSHAgentAuth bool `yaml:"ssh_agent_auth" json:"sshAgentAuth"`
+	SSHAgentAuth bool `yaml:"ssh_agent_auth,omitempty" json:"sshAgentAuth,omitempty"`
 	// Authorization mode configuration used in the cluster
-	Authorization AuthzConfig `yaml:"authorization" json:"authorization,omitempty"`
+	Authorization AuthzConfig `yaml:"authorization,omitempty" json:"authorization,omitempty"`
 	// Enable/disable strict docker version checking
-	IgnoreDockerVersion *bool `yaml:"ignore_docker_version" json:"ignoreDockerVersion" norman:"default=true"`
+	IgnoreDockerVersion *bool `yaml:"ignore_docker_version,omitempty" json:"ignoreDockerVersion,omitempty" norman:"default=true"`
 	// Enable/disable using cri-dockerd
-	EnableCRIDockerd *bool `yaml:"enable_cri_dockerd" json:"enableCRIDockerd" norman:"default=false"`
+	EnableCRIDockerd *bool `yaml:"enable_cri_dockerd,omitempty" json:"enableCRIDockerd,omitempty" norman:"default=false"`
 	// Kubernetes version to use (if kubernetes image is specified, image version takes precedence)
-	Version string `yaml:"kubernetes_version" json:"kubernetesVersion,omitempty"`
+	Version string `yaml:"kubernetes_version,omitempty" json:"kubernetesVersion,omitempty"`
 	// List of private registries and their credentials
-	PrivateRegistries []PrivateRegistry `yaml:"private_registries" json:"privateRegistries,omitempty"`
+	PrivateRegistries []PrivateRegistry `yaml:"private_registries,omitempty" json:"privateRegistries,omitempty"`
 	// Ingress controller used in the cluster
-	Ingress IngressConfig `yaml:"ingress" json:"ingress,omitempty"`
+	Ingress IngressConfig `yaml:"ingress,omitempty" json:"ingress,omitempty"`
 	// Cluster Name used in the kube config
-	ClusterName string `yaml:"cluster_name" json:"clusterName,omitempty"`
+	ClusterName string `yaml:"cluster_name,omitempty" json:"clusterName,omitempty"`
 	// Cloud Provider options
-	CloudProvider CloudProvider `yaml:"cloud_provider" json:"cloudProvider,omitempty"`
+	CloudProvider CloudProvider `yaml:"cloud_provider,omitempty" json:"cloudProvider,omitempty"`
 	// kubernetes directory path
-	PrefixPath string `yaml:"prefix_path" json:"prefixPath,omitempty"`
+	PrefixPath string `yaml:"prefix_path,omitempty" json:"prefixPath,omitempty"`
 	// kubernetes directory path for windows
-	WindowsPrefixPath string `yaml:"win_prefix_path" json:"winPrefixPath,omitempty"`
+	WindowsPrefixPath string `yaml:"win_prefix_path,omitempty" json:"winPrefixPath,omitempty"`
 	// Timeout in seconds for status check on addon deployment jobs
-	AddonJobTimeout int `yaml:"addon_job_timeout" json:"addonJobTimeout,omitempty" norman:"default=45"`
+	AddonJobTimeout int `yaml:"addon_job_timeout,omitempty" json:"addonJobTimeout,omitempty" norman:"default=45"`
 	// Bastion/Jump Host configuration
-	BastionHost BastionHost `yaml:"bastion_host" json:"bastionHost,omitempty"`
+	BastionHost BastionHost `yaml:"bastion_host,omitempty" json:"bastionHost,omitempty"`
 	// Monitoring Config
-	Monitoring MonitoringConfig `yaml:"monitoring" json:"monitoring,omitempty"`
+	Monitoring MonitoringConfig `yaml:"monitoring,omitempty" json:"monitoring,omitempty"`
 	// RestoreCluster flag
-	Restore RestoreConfig `yaml:"restore" json:"restore,omitempty"`
+	Restore RestoreConfig `yaml:"restore,omitempty" json:"restore,omitempty"`
 	// Rotating Certificates Option
 	RotateCertificates *RotateCertificates `yaml:"rotate_certificates,omitempty" json:"rotateCertificates,omitempty"`
 	// Rotate Encryption Key Option
-	RotateEncryptionKey bool `yaml:"rotate_encryption_key" json:"rotateEncryptionKey"`
+	RotateEncryptionKey bool `yaml:"rotate_encryption_key,omitempty" json:"rotateEncryptionKey,omitempty"`
 	// DNS Config
-	DNS *DNSConfig `yaml:"dns" json:"dns,omitempty"`
+	DNS *DNSConfig `yaml:"dns,omitempty" json:"dns,omitempty"`
 	// Upgrade Strategy for the cluster
 	UpgradeStrategy *NodeUpgradeStrategy `yaml:"upgrade_strategy,omitempty" json:"upgradeStrategy,omitempty"`
 }
@@ -73,276 +73,276 @@ func (r *RancherKubernetesEngineConfig) ObjClusterName() string {
 
 type NodeUpgradeStrategy struct {
 	// MaxUnavailableWorker input can be a number of nodes or a percentage of nodes (example, max_unavailable_worker: 2 OR max_unavailable_worker: 20%)
-	MaxUnavailableWorker string `yaml:"max_unavailable_worker" json:"maxUnavailableWorker,omitempty" norman:"min=1,default=10%"`
+	MaxUnavailableWorker string `yaml:"max_unavailable_worker,omitempty" json:"maxUnavailableWorker,omitempty" norman:"min=1,default=10%"`
 	// MaxUnavailableControlplane input can be a number of nodes or a percentage of nodes
-	MaxUnavailableControlplane string          `yaml:"max_unavailable_controlplane" json:"maxUnavailableControlplane,omitempty" norman:"min=1,default=1"`
-	Drain                      *bool           `yaml:"drain" json:"drain,omitempty"`
-	DrainInput                 *NodeDrainInput `yaml:"node_drain_input" json:"nodeDrainInput,omitempty"`
+	MaxUnavailableControlplane string          `yaml:"max_unavailable_controlplane,omitempty" json:"maxUnavailableControlplane,omitempty" norman:"min=1,default=1"`
+	Drain                      *bool           `yaml:"drain,omitempty" json:"drain,omitempty"`
+	DrainInput                 *NodeDrainInput `yaml:"node_drain_input,omitempty" json:"nodeDrainInput,omitempty"`
 }
 
 type BastionHost struct {
 	// Address of Bastion Host
-	Address string `yaml:"address" json:"address,omitempty"`
+	Address string `yaml:"address,omitempty" json:"address,omitempty"`
 	// SSH Port of Bastion Host
-	Port string `yaml:"port" json:"port,omitempty"`
+	Port string `yaml:"port,omitempty" json:"port,omitempty"`
 	// ssh User to Bastion Host
-	User string `yaml:"user" json:"user,omitempty"`
+	User string `yaml:"user,omitempty" json:"user,omitempty"`
 	// SSH Agent Auth enable
 	SSHAgentAuth bool `yaml:"ssh_agent_auth,omitempty" json:"sshAgentAuth,omitempty"`
 	// SSH Private Key
-	SSHKey string `yaml:"ssh_key" json:"sshKey,omitempty" norman:"type=password"`
+	SSHKey string `yaml:"ssh_key,omitempty" json:"sshKey,omitempty" norman:"type=password"`
 	// SSH Private Key Path
-	SSHKeyPath string `yaml:"ssh_key_path" json:"sshKeyPath,omitempty"`
+	SSHKeyPath string `yaml:"ssh_key_path,omitempty" json:"sshKeyPath,omitempty"`
 	// SSH Certificate
-	SSHCert string `yaml:"ssh_cert" json:"sshCert,omitempty"`
+	SSHCert string `yaml:"ssh_cert,omitempty" json:"sshCert,omitempty"`
 	// SSH Certificate Path
-	SSHCertPath string `yaml:"ssh_cert_path" json:"sshCertPath,omitempty"`
+	SSHCertPath string `yaml:"ssh_cert_path,omitempty" json:"sshCertPath,omitempty"`
 	// Ignore proxy environment variables
-	IgnoreProxyEnvVars bool `yaml:"ignore_proxy_env_vars" json:"ignoreProxyEnvVars,omitempty"`
+	IgnoreProxyEnvVars bool `yaml:"ignore_proxy_env_vars,omitempty" json:"ignoreProxyEnvVars,omitempty"`
 }
 
 type PrivateRegistry struct {
 	// URL for the registry
-	URL string `yaml:"url" json:"url,omitempty"`
+	URL string `yaml:"url,omitempty" json:"url,omitempty"`
 	// User name for registry acces
-	User string `yaml:"user" json:"user,omitempty"`
+	User string `yaml:"user,omitempty" json:"user,omitempty"`
 	// Password for registry access
-	Password string `yaml:"password" json:"password,omitempty" norman:"type=password"`
+	Password string `yaml:"password,omitempty" json:"password,omitempty" norman:"type=password"`
 	// Default registry
-	IsDefault bool `yaml:"is_default" json:"isDefault,omitempty"`
+	IsDefault bool `yaml:"is_default,omitempty" json:"isDefault,omitempty"`
 }
 
 type RKESystemImages struct {
 	// etcd image
-	Etcd string `yaml:"etcd" json:"etcd,omitempty"`
+	Etcd string `yaml:"etcd,omitempty" json:"etcd,omitempty"`
 	// Alpine image
-	Alpine string `yaml:"alpine" json:"alpine,omitempty"`
+	Alpine string `yaml:"alpine,omitempty" json:"alpine,omitempty"`
 	// rke-nginx-proxy image
-	NginxProxy string `yaml:"nginx_proxy" json:"nginxProxy,omitempty"`
+	NginxProxy string `yaml:"nginx_proxy,omitempty" json:"nginxProxy,omitempty"`
 	// rke-cert-deployer image
-	CertDownloader string `yaml:"cert_downloader" json:"certDownloader,omitempty"`
+	CertDownloader string `yaml:"cert_downloader,omitempty" json:"certDownloader,omitempty"`
 	// rke-service-sidekick image
-	KubernetesServicesSidecar string `yaml:"kubernetes_services_sidecar" json:"kubernetesServicesSidecar,omitempty"`
+	KubernetesServicesSidecar string `yaml:"kubernetes_services_sidecar,omitempty" json:"kubernetesServicesSidecar,omitempty"`
 	// KubeDNS image
-	KubeDNS string `yaml:"kubedns" json:"kubedns,omitempty"`
+	KubeDNS string `yaml:"kubedns,omitempty" json:"kubedns,omitempty"`
 	// DNSMasq image
-	DNSmasq string `yaml:"dnsmasq" json:"dnsmasq,omitempty"`
+	DNSmasq string `yaml:"dnsmasq,omitempty" json:"dnsmasq,omitempty"`
 	// KubeDNS side car image
-	KubeDNSSidecar string `yaml:"kubedns_sidecar" json:"kubednsSidecar,omitempty"`
+	KubeDNSSidecar string `yaml:"kubedns_sidecar,omitempty" json:"kubednsSidecar,omitempty"`
 	// KubeDNS autoscaler image
-	KubeDNSAutoscaler string `yaml:"kubedns_autoscaler" json:"kubednsAutoscaler,omitempty"`
+	KubeDNSAutoscaler string `yaml:"kubedns_autoscaler,omitempty" json:"kubednsAutoscaler,omitempty"`
 	// CoreDNS image
-	CoreDNS string `yaml:"coredns" json:"coredns,omitempty"`
+	CoreDNS string `yaml:"coredns,omitempty" json:"coredns,omitempty"`
 	// CoreDNS autoscaler image
-	CoreDNSAutoscaler string `yaml:"coredns_autoscaler" json:"corednsAutoscaler,omitempty"`
+	CoreDNSAutoscaler string `yaml:"coredns_autoscaler,omitempty" json:"corednsAutoscaler,omitempty"`
 	// Nodelocal image
-	Nodelocal string `yaml:"nodelocal" json:"nodelocal,omitempty"`
+	Nodelocal string `yaml:"nodelocal,omitempty" json:"nodelocal,omitempty"`
 	// Kubernetes image
-	Kubernetes string `yaml:"kubernetes" json:"kubernetes,omitempty"`
+	Kubernetes string `yaml:"kubernetes,omitempty" json:"kubernetes,omitempty"`
 	// Flannel image
-	Flannel string `yaml:"flannel" json:"flannel,omitempty"`
+	Flannel string `yaml:"flannel,omitempty" json:"flannel,omitempty"`
 	// Flannel CNI image
-	FlannelCNI string `yaml:"flannel_cni" json:"flannelCni,omitempty"`
+	FlannelCNI string `yaml:"flannel_cni,omitempty" json:"flannelCni,omitempty"`
 	// Calico Node image
-	CalicoNode string `yaml:"calico_node" json:"calicoNode,omitempty"`
+	CalicoNode string `yaml:"calico_node,omitempty" json:"calicoNode,omitempty"`
 	// Calico CNI image
-	CalicoCNI string `yaml:"calico_cni" json:"calicoCni,omitempty"`
+	CalicoCNI string `yaml:"calico_cni,omitempty" json:"calicoCni,omitempty"`
 	// Calico Controllers image
-	CalicoControllers string `yaml:"calico_controllers" json:"calicoControllers,omitempty"`
+	CalicoControllers string `yaml:"calico_controllers,omitempty" json:"calicoControllers,omitempty"`
 	// Calicoctl image
-	CalicoCtl string `yaml:"calico_ctl" json:"calicoCtl,omitempty"`
+	CalicoCtl string `yaml:"calico_ctl,omitempty" json:"calicoCtl,omitempty"`
 	//CalicoFlexVol image
-	CalicoFlexVol string `yaml:"calico_flexvol" json:"calicoFlexVol,omitempty"`
+	CalicoFlexVol string `yaml:"calico_flexvol,omitempty" json:"calicoFlexVol,omitempty"`
 	// Canal Node Image
-	CanalNode string `yaml:"canal_node" json:"canalNode,omitempty"`
+	CanalNode string `yaml:"canal_node,omitempty" json:"canalNode,omitempty"`
 	// Canal CNI image
-	CanalCNI string `yaml:"canal_cni" json:"canalCni,omitempty"`
+	CanalCNI string `yaml:"canal_cni,omitempty" json:"canalCni,omitempty"`
 	// Canal Controllers Image needed for Calico/Canal v3.14.0+
-	CanalControllers string `yaml:"canal_controllers" json:"canalControllers,omitempty"`
+	CanalControllers string `yaml:"canal_controllers,omitempty" json:"canalControllers,omitempty"`
 	//CanalFlannel image
-	CanalFlannel string `yaml:"canal_flannel" json:"canalFlannel,omitempty"`
+	CanalFlannel string `yaml:"canal_flannel,omitempty" json:"canalFlannel,omitempty"`
 	//CanalFlexVol image
-	CanalFlexVol string `yaml:"canal_flexvol" json:"canalFlexVol,omitempty"`
+	CanalFlexVol string `yaml:"canal_flexvol,omitempty" json:"canalFlexVol,omitempty"`
 	//Weave Node image
-	WeaveNode string `yaml:"weave_node" json:"weaveNode,omitempty"`
+	WeaveNode string `yaml:"weave_node,omitempty" json:"weaveNode,omitempty"`
 	// Weave CNI image
-	WeaveCNI string `yaml:"weave_cni" json:"weaveCni,omitempty"`
+	WeaveCNI string `yaml:"weave_cni,omitempty" json:"weaveCni,omitempty"`
 	// Pod infra container image
-	PodInfraContainer string `yaml:"pod_infra_container" json:"podInfraContainer,omitempty"`
+	PodInfraContainer string `yaml:"pod_infra_container,omitempty" json:"podInfraContainer,omitempty"`
 	// Ingress Controller image
-	Ingress string `yaml:"ingress" json:"ingress,omitempty"`
+	Ingress string `yaml:"ingress,omitempty" json:"ingress,omitempty"`
 	// Ingress Controller Backend image
-	IngressBackend string `yaml:"ingress_backend" json:"ingressBackend,omitempty"`
+	IngressBackend string `yaml:"ingress_backend,omitempty" json:"ingressBackend,omitempty"`
 	// Metrics Server image
-	MetricsServer string `yaml:"metrics_server" json:"metricsServer,omitempty"`
+	MetricsServer string `yaml:"metrics_server,omitempty" json:"metricsServer,omitempty"`
 	// Pod infra container image for Windows
-	WindowsPodInfraContainer string `yaml:"windows_pod_infra_container" json:"windowsPodInfraContainer,omitempty"`
+	WindowsPodInfraContainer string `yaml:"windows_pod_infra_container,omitempty" json:"windowsPodInfraContainer,omitempty"`
 	// Cni deployer container image for Cisco ACI
-	AciCniDeployContainer string `yaml:"aci_cni_deploy_container" json:"aciCniDeployContainer,omitempty"`
+	AciCniDeployContainer string `yaml:"aci_cni_deploy_container,omitempty" json:"aciCniDeployContainer,omitempty"`
 	// host container image for Cisco ACI
-	AciHostContainer string `yaml:"aci_host_container" json:"aciHostContainer,omitempty"`
+	AciHostContainer string `yaml:"aci_host_container,omitempty" json:"aciHostContainer,omitempty"`
 	// opflex agent container image for Cisco ACI
-	AciOpflexContainer string `yaml:"aci_opflex_container" json:"aciOpflexContainer,omitempty"`
+	AciOpflexContainer string `yaml:"aci_opflex_container,omitempty" json:"aciOpflexContainer,omitempty"`
 	// mcast daemon container image for Cisco ACI
-	AciMcastContainer string `yaml:"aci_mcast_container" json:"aciMcastContainer,omitempty"`
+	AciMcastContainer string `yaml:"aci_mcast_container,omitempty" json:"aciMcastContainer,omitempty"`
 	// OpenvSwitch container image for Cisco ACI
-	AciOpenvSwitchContainer string `yaml:"aci_ovs_container" json:"aciOvsContainer,omitempty"`
+	AciOpenvSwitchContainer string `yaml:"aci_ovs_container,omitempty" json:"aciOvsContainer,omitempty"`
 	// Controller container image for Cisco ACI
-	AciControllerContainer string `yaml:"aci_controller_container" json:"aciControllerContainer,omitempty"`
+	AciControllerContainer string `yaml:"aci_controller_container,omitempty" json:"aciControllerContainer,omitempty"`
 	// GBP Server container image for Cisco ACI
-	AciGbpServerContainer string `yaml:"aci_gbp_server_container" json:"aciGbpServerContainer,omitempty"`
+	AciGbpServerContainer string `yaml:"aci_gbp_server_container,omitempty" json:"aciGbpServerContainer,omitempty"`
 	// Opflex Server container image for Cisco ACI
-	AciOpflexServerContainer string `yaml:"aci_opflex_server_container" json:"aciOpflexServerContainer,omitempty"`
+	AciOpflexServerContainer string `yaml:"aci_opflex_server_container,omitempty" json:"aciOpflexServerContainer,omitempty"`
 }
 
 type RKEConfigNode struct {
 	// Name of the host provisioned via docker machine
 	NodeName string `yaml:"nodeName,omitempty" json:"nodeName,omitempty" norman:"type=reference[node]"`
 	// IP or FQDN that is fully resolvable and used for SSH communication
-	Address string `yaml:"address" json:"address,omitempty"`
+	Address string `yaml:"address,omitempty" json:"address,omitempty"`
 	// Port used for SSH communication
-	Port string `yaml:"port" json:"port,omitempty"`
+	Port string `yaml:"port,omitempty" json:"port,omitempty"`
 	// Optional - Internal address that will be used for components communication
-	InternalAddress string `yaml:"internal_address" json:"internalAddress,omitempty"`
+	InternalAddress string `yaml:"internal_address,omitempty" json:"internalAddress,omitempty"`
 	// Node role in kubernetes cluster (controlplane, worker, or etcd)
-	Role []string `yaml:"role" json:"role,omitempty" norman:"type=array[enum],options=etcd|worker|controlplane"`
+	Role []string `yaml:"role,omitempty" json:"role,omitempty" norman:"type=array[enum],options=etcd|worker|controlplane"`
 	// Optional - Hostname of the node
-	HostnameOverride string `yaml:"hostname_override" json:"hostnameOverride,omitempty"`
+	HostnameOverride string `yaml:"hostname_override,omitempty" json:"hostnameOverride,omitempty"`
 	// SSH usesr that will be used by RKE
-	User string `yaml:"user" json:"user,omitempty"`
+	User string `yaml:"user,omitempty" json:"user,omitempty"`
 	// Optional - Docker socket on the node that will be used in tunneling
-	DockerSocket string `yaml:"docker_socket" json:"dockerSocket,omitempty"`
+	DockerSocket string `yaml:"docker_socket,omitempty" json:"dockerSocket,omitempty"`
 	// SSH Agent Auth enable
 	SSHAgentAuth bool `yaml:"ssh_agent_auth,omitempty" json:"sshAgentAuth,omitempty"`
 	// SSH Private Key
-	SSHKey string `yaml:"ssh_key" json:"sshKey,omitempty" norman:"type=password"`
+	SSHKey string `yaml:"ssh_key,omitempty" json:"sshKey,omitempty" norman:"type=password"`
 	// SSH Private Key Path
-	SSHKeyPath string `yaml:"ssh_key_path" json:"sshKeyPath,omitempty"`
+	SSHKeyPath string `yaml:"ssh_key_path,omitempty" json:"sshKeyPath,omitempty"`
 	// SSH Certificate
-	SSHCert string `yaml:"ssh_cert" json:"sshCert,omitempty"`
+	SSHCert string `yaml:"ssh_cert,omitempty" json:"sshCert,omitempty"`
 	// SSH Certificate Path
-	SSHCertPath string `yaml:"ssh_cert_path" json:"sshCertPath,omitempty"`
+	SSHCertPath string `yaml:"ssh_cert_path,omitempty" json:"sshCertPath,omitempty"`
 	// Node Labels
-	Labels map[string]string `yaml:"labels" json:"labels,omitempty"`
+	Labels map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	// Node Taints
-	Taints []RKETaint `yaml:"taints" json:"taints,omitempty"`
+	Taints []RKETaint `yaml:"taints,omitempty" json:"taints,omitempty"`
 }
 
 type K8sVersionInfo struct {
-	MinRKEVersion       string `yaml:"min_rke_version" json:"minRKEVersion,omitempty"`
-	MaxRKEVersion       string `yaml:"max_rke_version" json:"maxRKEVersion,omitempty"`
-	DeprecateRKEVersion string `yaml:"deprecate_rke_version" json:"deprecateRKEVersion,omitempty"`
+	MinRKEVersion       string `yaml:"min_rke_version,omitempty" json:"minRKEVersion,omitempty"`
+	MaxRKEVersion       string `yaml:"max_rke_version,omitempty" json:"maxRKEVersion,omitempty"`
+	DeprecateRKEVersion string `yaml:"deprecate_rke_version,omitempty" json:"deprecateRKEVersion,omitempty"`
 
-	MinRancherVersion       string `yaml:"min_rancher_version" json:"minRancherVersion,omitempty"`
-	MaxRancherVersion       string `yaml:"max_rancher_version" json:"maxRancherVersion,omitempty"`
-	DeprecateRancherVersion string `yaml:"deprecate_rancher_version" json:"deprecateRancherVersion,omitempty"`
+	MinRancherVersion       string `yaml:"min_rancher_version,omitempty" json:"minRancherVersion,omitempty"`
+	MaxRancherVersion       string `yaml:"max_rancher_version,omitempty" json:"maxRancherVersion,omitempty"`
+	DeprecateRancherVersion string `yaml:"deprecate_rancher_version,omitempty" json:"deprecateRancherVersion,omitempty"`
 }
 
 type RKEConfigServices struct {
 	// Etcd Service
-	Etcd ETCDService `yaml:"etcd" json:"etcd,omitempty"`
+	Etcd ETCDService `yaml:"etcd,omitempty" json:"etcd,omitempty"`
 	// KubeAPI Service
-	KubeAPI KubeAPIService `yaml:"kube-api" json:"kubeApi,omitempty"`
+	KubeAPI KubeAPIService `yaml:"kube-api,omitempty" json:"kubeApi,omitempty"`
 	// KubeController Service
-	KubeController KubeControllerService `yaml:"kube-controller" json:"kubeController,omitempty"`
+	KubeController KubeControllerService `yaml:"kube-controller,omitempty" json:"kubeController,omitempty"`
 	// Scheduler Service
-	Scheduler SchedulerService `yaml:"scheduler" json:"scheduler,omitempty"`
+	Scheduler SchedulerService `yaml:"scheduler,omitempty" json:"scheduler,omitempty"`
 	// Kubelet Service
-	Kubelet KubeletService `yaml:"kubelet" json:"kubelet,omitempty"`
+	Kubelet KubeletService `yaml:"kubelet,omitempty" json:"kubelet,omitempty"`
 	// KubeProxy Service
-	Kubeproxy KubeproxyService `yaml:"kubeproxy" json:"kubeproxy,omitempty"`
+	Kubeproxy KubeproxyService `yaml:"kubeproxy,omitempty" json:"kubeproxy,omitempty"`
 }
 
 type ETCDService struct {
 	// Base service properties
 	BaseService `yaml:",inline" json:",inline"`
 	// List of etcd urls
-	ExternalURLs []string `yaml:"external_urls" json:"externalUrls,omitempty"`
+	ExternalURLs []string `yaml:"external_urls,omitempty" json:"externalUrls,omitempty"`
 	// External CA certificate
-	CACert string `yaml:"ca_cert" json:"caCert,omitempty"`
+	CACert string `yaml:"ca_cert,omitempty" json:"caCert,omitempty"`
 	// External Client certificate
-	Cert string `yaml:"cert" json:"cert,omitempty"`
+	Cert string `yaml:"cert,omitempty" json:"cert,omitempty"`
 	// External Client key
-	Key string `yaml:"key" json:"key,omitempty"`
+	Key string `yaml:"key,omitempty" json:"key,omitempty"`
 	// External etcd prefix
-	Path string `yaml:"path" json:"path,omitempty"`
+	Path string `yaml:"path,omitempty" json:"path,omitempty"`
 	// UID to run etcd container as
-	UID int `yaml:"uid" json:"uid,omitempty"`
+	UID int `yaml:"uid,omitempty" json:"uid,omitempty"`
 	// GID to run etcd container as
-	GID int `yaml:"gid" json:"gid,omitempty"`
+	GID int `yaml:"gid,omitempty" json:"gid,omitempty"`
 
 	// Etcd Recurring snapshot Service, used by rke only
-	Snapshot *bool `yaml:"snapshot" json:"snapshot,omitempty" norman:"default=false"`
+	Snapshot *bool `yaml:"snapshot,omitempty" json:"snapshot,omitempty" norman:"default=false"`
 	// Etcd snapshot Retention period
-	Retention string `yaml:"retention" json:"retention,omitempty" norman:"default=72h"`
+	Retention string `yaml:"retention,omitempty" json:"retention,omitempty" norman:"default=72h"`
 	// Etcd snapshot Creation period
-	Creation string `yaml:"creation" json:"creation,omitempty" norman:"default=12h"`
+	Creation string `yaml:"creation,omitempty" json:"creation,omitempty" norman:"default=12h"`
 	// Backup backend for etcd snapshots
-	BackupConfig *BackupConfig `yaml:"backup_config" json:"backupConfig,omitempty"`
+	BackupConfig *BackupConfig `yaml:"backup_config,omitempty" json:"backupConfig,omitempty"`
 }
 
 type KubeAPIService struct {
 	// Base service properties
 	BaseService `yaml:",inline" json:",inline"`
 	// Virtual IP range that will be used by Kubernetes services
-	ServiceClusterIPRange string `yaml:"service_cluster_ip_range" json:"serviceClusterIpRange,omitempty"`
+	ServiceClusterIPRange string `yaml:"service_cluster_ip_range,omitempty" json:"serviceClusterIpRange,omitempty"`
 	// Port range for services defined with NodePort type
-	ServiceNodePortRange string `yaml:"service_node_port_range" json:"serviceNodePortRange,omitempty" norman:"default=30000-32767"`
+	ServiceNodePortRange string `yaml:"service_node_port_range,omitempty" json:"serviceNodePortRange,omitempty" norman:"default=30000-32767"`
 	// Enabled/Disable PodSecurityPolicy
-	PodSecurityPolicy bool `yaml:"pod_security_policy" json:"podSecurityPolicy,omitempty"`
+	PodSecurityPolicy bool `yaml:"pod_security_policy,omitempty" json:"podSecurityPolicy,omitempty"`
 	// Enable/Disable AlwaysPullImages admissions plugin
-	AlwaysPullImages bool `yaml:"always_pull_images" json:"alwaysPullImages,omitempty"`
+	AlwaysPullImages bool `yaml:"always_pull_images,omitempty" json:"alwaysPullImages,omitempty"`
 	// Secrets encryption provider config
-	SecretsEncryptionConfig *SecretsEncryptionConfig `yaml:"secrets_encryption_config" json:"secretsEncryptionConfig,omitempty"`
+	SecretsEncryptionConfig *SecretsEncryptionConfig `yaml:"secrets_encryption_config,omitempty" json:"secretsEncryptionConfig,omitempty"`
 	// Audit Log Configuration
-	AuditLog *AuditLog `yaml:"audit_log" json:"auditLog,omitempty"`
+	AuditLog *AuditLog `yaml:"audit_log,omitempty" json:"auditLog,omitempty"`
 	// AdmissionConfiguration
-	AdmissionConfiguration *apiserverv1alpha1.AdmissionConfiguration `yaml:"admission_configuration" json:"admissionConfiguration,omitempty" norman:"type=map[json]"`
+	AdmissionConfiguration *apiserverv1alpha1.AdmissionConfiguration `yaml:"admission_configuration,omitempty" json:"admissionConfiguration,omitempty" norman:"type=map[json]"`
 	// Event Rate Limit configuration
-	EventRateLimit *EventRateLimit `yaml:"event_rate_limit" json:"eventRateLimit,omitempty"`
+	EventRateLimit *EventRateLimit `yaml:"event_rate_limit,omitempty" json:"eventRateLimit,omitempty"`
 }
 
 type EventRateLimit struct {
-	Enabled       bool           `yaml:"enabled" json:"enabled,omitempty"`
-	Configuration *Configuration `yaml:"configuration" json:"configuration,omitempty" norman:"type=map[json]"`
+	Enabled       bool           `yaml:"enabled,omitempty" json:"enabled,omitempty"`
+	Configuration *Configuration `yaml:"configuration,omitempty" json:"configuration,omitempty" norman:"type=map[json]"`
 }
 
 type AuditLog struct {
-	Enabled       bool            `yaml:"enabled" json:"enabled,omitempty"`
-	Configuration *AuditLogConfig `yaml:"configuration" json:"configuration,omitempty"`
+	Enabled       bool            `yaml:"enabled,omitempty" json:"enabled,omitempty"`
+	Configuration *AuditLogConfig `yaml:"configuration,omitempty" json:"configuration,omitempty"`
 }
 
 type AuditLogConfig struct {
-	MaxAge    int             `yaml:"max_age" json:"maxAge,omitempty"`
-	MaxBackup int             `yaml:"max_backup" json:"maxBackup,omitempty"`
-	MaxSize   int             `yaml:"max_size" json:"maxSize,omitempty"`
-	Path      string          `yaml:"path" json:"path,omitempty"`
-	Format    string          `yaml:"format" json:"format,omitempty"`
-	Policy    *auditv1.Policy `yaml:"policy" json:"policy,omitempty" norman:"type=map[json]"`
+	MaxAge    int             `yaml:"max_age,omitempty" json:"maxAge,omitempty"`
+	MaxBackup int             `yaml:"max_backup,omitempty" json:"maxBackup,omitempty"`
+	MaxSize   int             `yaml:"max_size,omitempty" json:"maxSize,omitempty"`
+	Path      string          `yaml:"path,omitempty" json:"path,omitempty"`
+	Format    string          `yaml:"format,omitempty" json:"format,omitempty"`
+	Policy    *auditv1.Policy `yaml:"policy,omitempty" json:"policy,omitempty" norman:"type=map[json]"`
 }
 
 type KubeControllerService struct {
 	// Base service properties
 	BaseService `yaml:",inline" json:",inline"`
 	// CIDR Range for Pods in cluster
-	ClusterCIDR string `yaml:"cluster_cidr" json:"clusterCidr,omitempty"`
+	ClusterCIDR string `yaml:"cluster_cidr,omitempty" json:"clusterCidr,omitempty"`
 	// Virtual IP range that will be used by Kubernetes services
-	ServiceClusterIPRange string `yaml:"service_cluster_ip_range" json:"serviceClusterIpRange,omitempty"`
+	ServiceClusterIPRange string `yaml:"service_cluster_ip_range,omitempty" json:"serviceClusterIpRange,omitempty"`
 }
 
 type KubeletService struct {
 	// Base service properties
 	BaseService `yaml:",inline" json:",inline"`
 	// Domain of the cluster (default: "cluster.local")
-	ClusterDomain string `yaml:"cluster_domain" json:"clusterDomain,omitempty"`
+	ClusterDomain string `yaml:"cluster_domain,omitempty" json:"clusterDomain,omitempty"`
 	// The image whose network/ipc namespaces containers in each pod will use
-	InfraContainerImage string `yaml:"infra_container_image" json:"infraContainerImage,omitempty"`
+	InfraContainerImage string `yaml:"infra_container_image,omitempty" json:"infraContainerImage,omitempty"`
 	// Cluster DNS service ip
-	ClusterDNSServer string `yaml:"cluster_dns_server" json:"clusterDnsServer,omitempty"`
+	ClusterDNSServer string `yaml:"cluster_dns_server,omitempty" json:"clusterDnsServer,omitempty"`
 	// Fail if swap is enabled
-	FailSwapOn bool `yaml:"fail_swap_on" json:"failSwapOn,omitempty"`
+	FailSwapOn bool `yaml:"fail_swap_on,omitempty" json:"failSwapOn,omitempty"`
 	// Generate per node kubelet serving certificates created using kube-ca
-	GenerateServingCertificate bool `yaml:"generate_serving_certificate" json:"generateServingCertificate,omitempty"`
+	GenerateServingCertificate bool `yaml:"generate_serving_certificate,omitempty" json:"generateServingCertificate,omitempty"`
 }
 
 type KubeproxyService struct {
@@ -357,30 +357,30 @@ type SchedulerService struct {
 
 type BaseService struct {
 	// Docker image of the service
-	Image string `yaml:"image" json:"image,omitempty"`
+	Image string `yaml:"image,omitempty" json:"image,omitempty"`
 	// Extra arguments that are added to the services
-	ExtraArgs map[string]string `yaml:"extra_args" json:"extraArgs,omitempty"`
+	ExtraArgs map[string]string `yaml:"extra_args,omitempty" json:"extraArgs,omitempty"`
 	// Extra binds added to the nodes
-	ExtraBinds []string `yaml:"extra_binds" json:"extraBinds,omitempty"`
+	ExtraBinds []string `yaml:"extra_binds,omitempty" json:"extraBinds,omitempty"`
 	// this is to provide extra env variable to the docker container running kubernetes service
-	ExtraEnv []string `yaml:"extra_env" json:"extraEnv,omitempty"`
+	ExtraEnv []string `yaml:"extra_env,omitempty" json:"extraEnv,omitempty"`
 
 	// Windows nodes only of the same as the above
 	// Extra arguments that are added to the services
-	WindowsExtraArgs map[string]string `yaml:"win_extra_args" json:"winExtraArgs,omitempty"`
+	WindowsExtraArgs map[string]string `yaml:"win_extra_args,omitempty" json:"winExtraArgs,omitempty"`
 	// Extra binds added to the nodes
-	WindowsExtraBinds []string `yaml:"win_extra_binds" json:"winExtraBinds,omitempty"`
+	WindowsExtraBinds []string `yaml:"win_extra_binds,omitempty" json:"winExtraBinds,omitempty"`
 	// this is to provide extra env variable to the docker container running kubernetes service
-	WindowsExtraEnv []string `yaml:"win_extra_env" json:"winExtraEnv,omitempty"`
+	WindowsExtraEnv []string `yaml:"win_extra_env,omitempty" json:"winExtraEnv,omitempty"`
 }
 
 type NetworkConfig struct {
 	// Network Plugin That will be used in kubernetes cluster
-	Plugin string `yaml:"plugin" json:"plugin,omitempty" norman:"default=canal"`
+	Plugin string `yaml:"plugin,omitempty" json:"plugin,omitempty" norman:"default=canal"`
 	// Plugin options to configure network properties
-	Options map[string]string `yaml:"options" json:"options,omitempty"`
+	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
 	// Set MTU for CNI provider
-	MTU int `yaml:"mtu" json:"mtu,omitempty"`
+	MTU int `yaml:"mtu,omitempty" json:"mtu,omitempty"`
 	// CalicoNetworkProvider
 	CalicoNetworkProvider *CalicoNetworkProvider `yaml:"calico_network_provider,omitempty" json:"calicoNetworkProvider,omitempty"`
 	// CanalNetworkProvider
@@ -392,70 +392,70 @@ type NetworkConfig struct {
 	// AciNetworkProvider
 	AciNetworkProvider *AciNetworkProvider `yaml:"aci_network_provider,omitempty" json:"aciNetworkProvider,omitempty"`
 	// NodeSelector key pair
-	NodeSelector map[string]string `yaml:"node_selector" json:"nodeSelector,omitempty"`
+	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Network plugin daemonset upgrade strategy
-	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy" json:"updateStrategy,omitempty"`
+	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy,omitempty" json:"updateStrategy,omitempty"`
 	// Tolerations for Deployments
-	Tolerations []v1.Toleration `yaml:"tolerations" json:"tolerations,omitempty"`
+	Tolerations []v1.Toleration `yaml:"tolerations,omitempty" json:"tolerations,omitempty"`
 }
 
 type AuthWebhookConfig struct {
 	// ConfigFile is a multiline string that represent a custom webhook config file
-	ConfigFile string `yaml:"config_file" json:"configFile,omitempty"`
+	ConfigFile string `yaml:"config_file,omitempty" json:"configFile,omitempty"`
 	// CacheTimeout controls how long to cache authentication decisions
-	CacheTimeout string `yaml:"cache_timeout" json:"cacheTimeout,omitempty"`
+	CacheTimeout string `yaml:"cache_timeout,omitempty" json:"cacheTimeout,omitempty"`
 }
 
 type AuthnConfig struct {
 	// Authentication strategy that will be used in kubernetes cluster
-	Strategy string `yaml:"strategy" json:"strategy,omitempty" norman:"default=x509"`
+	Strategy string `yaml:"strategy,omitempty" json:"strategy,omitempty" norman:"default=x509"`
 	// List of additional hostnames and IPs to include in the api server PKI cert
-	SANs []string `yaml:"sans" json:"sans,omitempty"`
+	SANs []string `yaml:"sans,omitempty" json:"sans,omitempty"`
 	// Webhook configuration options
-	Webhook *AuthWebhookConfig `yaml:"webhook" json:"webhook,omitempty"`
+	Webhook *AuthWebhookConfig `yaml:"webhook,omitempty" json:"webhook,omitempty"`
 }
 
 type AuthzConfig struct {
 	// Authorization mode used by kubernetes
-	Mode string `yaml:"mode" json:"mode,omitempty"`
+	Mode string `yaml:"mode,omitempty" json:"mode,omitempty"`
 	// Authorization mode options
-	Options map[string]string `yaml:"options" json:"options,omitempty"`
+	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
 }
 
 type IngressConfig struct {
 	// Ingress controller type used by kubernetes
-	Provider string `yaml:"provider" json:"provider,omitempty" norman:"default=nginx"`
+	Provider string `yaml:"provider,omitempty" json:"provider,omitempty" norman:"default=nginx"`
 	// These options are NOT for configuring Ingress's addon template.
 	// They are used for its ConfigMap options specifically.
-	Options map[string]string `yaml:"options" json:"options,omitempty"`
+	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
 	// NodeSelector key pair
-	NodeSelector map[string]string `yaml:"node_selector" json:"nodeSelector,omitempty"`
+	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Ingress controller extra arguments
-	ExtraArgs map[string]string `yaml:"extra_args" json:"extraArgs,omitempty"`
+	ExtraArgs map[string]string `yaml:"extra_args,omitempty" json:"extraArgs,omitempty"`
 	// DNS Policy
-	DNSPolicy string `yaml:"dns_policy" json:"dnsPolicy,omitempty"`
+	DNSPolicy string `yaml:"dns_policy,omitempty" json:"dnsPolicy,omitempty"`
 	// Extra Env vars
-	ExtraEnvs []ExtraEnv `yaml:"extra_envs" json:"extraEnvs,omitempty" norman:"type=array[json]"`
+	ExtraEnvs []ExtraEnv `yaml:"extra_envs,omitempty" json:"extraEnvs,omitempty" norman:"type=array[json]"`
 	// Extra volumes
-	ExtraVolumes []ExtraVolume `yaml:"extra_volumes" json:"extraVolumes,omitempty" norman:"type=array[json]"`
+	ExtraVolumes []ExtraVolume `yaml:"extra_volumes,omitempty" json:"extraVolumes,omitempty" norman:"type=array[json]"`
 	// Extra volume mounts
-	ExtraVolumeMounts []ExtraVolumeMount `yaml:"extra_volume_mounts" json:"extraVolumeMounts,omitempty" norman:"type=array[json]"`
+	ExtraVolumeMounts []ExtraVolumeMount `yaml:"extra_volume_mounts,omitempty" json:"extraVolumeMounts,omitempty" norman:"type=array[json]"`
 	// nginx daemonset upgrade strategy
-	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy" json:"updateStrategy,omitempty"`
+	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy,omitempty" json:"updateStrategy,omitempty"`
 	// Http port for ingress controller daemonset
-	HTTPPort int `yaml:"http_port" json:"httpPort,omitempty"`
+	HTTPPort int `yaml:"http_port,omitempty" json:"httpPort,omitempty"`
 	// Https port for ingress controller daemonset
-	HTTPSPort int `yaml:"https_port" json:"httpsPort,omitempty"`
+	HTTPSPort int `yaml:"https_port,omitempty" json:"httpsPort,omitempty"`
 	// NetworkMode selector for ingress controller pods. Default is HostNetwork
-	NetworkMode string `yaml:"network_mode" json:"networkMode,omitempty"`
+	NetworkMode string `yaml:"network_mode,omitempty" json:"networkMode,omitempty"`
 	// Tolerations for Deployments
-	Tolerations []v1.Toleration `yaml:"tolerations" json:"tolerations,omitempty"`
+	Tolerations []v1.Toleration `yaml:"tolerations,omitempty" json:"tolerations,omitempty"`
 	// Enable or disable nginx default-http-backend
-	DefaultBackend *bool `yaml:"default_backend" json:"defaultBackend,omitempty" norman:"default=true"`
+	DefaultBackend *bool `yaml:"default_backend,omitempty" json:"defaultBackend,omitempty" norman:"default=true"`
 	// Priority class name for Nginx-Ingress's "default-http-backend" deployment
-	DefaultHTTPBackendPriorityClassName string `yaml:"default_http_backend_priority_class_name" json:"defaultHttpBackendPriorityClassName,omitempty"`
+	DefaultHTTPBackendPriorityClassName string `yaml:"default_http_backend_priority_class_name,omitempty" json:"defaultHttpBackendPriorityClassName,omitempty"`
 	// Priority class name for Nginx-Ingress's "nginx-ingress-controller" daemonset
-	NginxIngressControllerPriorityClassName string `yaml:"nginx_ingress_controller_priority_class_name" json:"nginxIngressControllerPriorityClassName,omitempty"`
+	NginxIngressControllerPriorityClassName string `yaml:"nginx_ingress_controller_priority_class_name,omitempty" json:"nginxIngressControllerPriorityClassName,omitempty"`
 }
 
 type ExtraEnv struct {
@@ -543,7 +543,7 @@ type PortCheck struct {
 
 type CloudProvider struct {
 	// Name of the Cloud Provider
-	Name string `yaml:"name" json:"name,omitempty"`
+	Name string `yaml:"name,omitempty" json:"name,omitempty"`
 	// AWSCloudProvider
 	AWSCloudProvider *AWSCloudProvider `yaml:"awsCloudProvider,omitempty" json:"awsCloudProvider,omitempty"`
 	// AzureCloudProvider
@@ -575,8 +575,8 @@ type WeaveNetworkProvider struct {
 }
 
 type AciNetworkProvider struct {
-	SystemIdentifier         string   `yaml:"system_id,omitempty" json:"systemId,omitempty"`
-	ApicHosts                []string `yaml:"apic_hosts" json:"apicHosts,omitempty"`
+	SystemIdentifier         string   `yaml:"system_id,omitempty,omitempty" json:"systemId,omitempty"`
+	ApicHosts                []string `yaml:"apic_hosts,omitempty" json:"apicHosts,omitempty"`
 	Token                    string   `yaml:"token,omitempty" json:"token,omitempty"`
 	ApicUserName             string   `yaml:"apic_user_name,omitempty" json:"apicUserName,omitempty"`
 	ApicUserKey              string   `yaml:"apic_user_key,omitempty" json:"apicUserKey,omitempty"`
@@ -592,7 +592,7 @@ type AciNetworkProvider struct {
 	VRFName                  string   `yaml:"vrf_name,omitempty" json:"vrfName,omitempty"`
 	VRFTenant                string   `yaml:"vrf_tenant,omitempty" json:"vrfTenant,omitempty"`
 	L3Out                    string   `yaml:"l3out,omitempty" json:"l3out,omitempty"`
-	L3OutExternalNetworks    []string `yaml:"l3out_external_networks" json:"l3outExternalNetworks,omitempty"`
+	L3OutExternalNetworks    []string `yaml:"l3out_external_networks,omitempty" json:"l3outExternalNetworks,omitempty"`
 	DynamicExternalSubnet    string   `yaml:"extern_dynamic,omitempty" json:"externDynamic,omitempty"`
 	StaticExternalSubnet     string   `yaml:"extern_static,omitempty" json:"externStatic,omitempty"`
 	ServiceGraphSubnet       string   `yaml:"node_svc_subnet,omitempty" json:"nodeSvcSubnet,omitempty"`
@@ -903,25 +903,25 @@ type GlobalAwsOpts struct {
 
 type MonitoringConfig struct {
 	// Monitoring server provider
-	Provider string `yaml:"provider" json:"provider,omitempty" norman:"default=metrics-server"`
+	Provider string `yaml:"provider,omitempty" json:"provider,omitempty" norman:"default=metrics-server"`
 	// These options are NOT for configuring the Metrics-Server's addon template.
 	// They are used to pass command args to the metric-server's deployment containers specifically.
-	Options map[string]string `yaml:"options" json:"options,omitempty"`
+	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
 	// NodeSelector key pair
-	NodeSelector map[string]string `yaml:"node_selector" json:"nodeSelector,omitempty"`
+	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Update strategy
-	UpdateStrategy *DeploymentStrategy `yaml:"update_strategy" json:"updateStrategy,omitempty"`
+	UpdateStrategy *DeploymentStrategy `yaml:"update_strategy,omitempty" json:"updateStrategy,omitempty"`
 	// Number of monitoring addon pods
 	Replicas *int32 `yaml:"replicas" json:"replicas,omitempty" norman:"default=1"`
 	// Tolerations for Deployments
-	Tolerations []v1.Toleration `yaml:"tolerations" json:"tolerations,omitempty"`
+	Tolerations []v1.Toleration `yaml:"tolerations,omitempty" json:"tolerations,omitempty"`
 	// Priority class name for Metrics-Server's "metrics-server" deployment
-	MetricsServerPriorityClassName string `yaml:"metrics_server_priority_class_name" json:"metricsServerPriorityClassName,omitempty"`
+	MetricsServerPriorityClassName string `yaml:"metrics_server_priority_class_name,omitempty" json:"metricsServerPriorityClassName,omitempty"`
 }
 
 type RestoreConfig struct {
-	Restore      bool   `yaml:"restore" json:"restore,omitempty"`
-	SnapshotName string `yaml:"snapshot_name" json:"snapshotName,omitempty"`
+	Restore      bool   `yaml:"restore,omitempty" json:"restore,omitempty"`
+	SnapshotName string `yaml:"snapshot_name,omitempty" json:"snapshotName,omitempty"`
 }
 type RotateCertificates struct {
 	// Rotate CA Certificates
@@ -932,59 +932,59 @@ type RotateCertificates struct {
 
 type DNSConfig struct {
 	// DNS provider
-	Provider string `yaml:"provider" json:"provider,omitempty"`
+	Provider string `yaml:"provider,omitempty" json:"provider,omitempty"`
 	// DNS config options
-	Options map[string]string `yaml:"options" json:"options,omitempty"`
+	Options map[string]string `yaml:"options,omitempty" json:"options,omitempty"`
 	// Upstream nameservers
-	UpstreamNameservers []string `yaml:"upstreamnameservers" json:"upstreamnameservers,omitempty"`
+	UpstreamNameservers []string `yaml:"upstreamnameservers,omitempty" json:"upstreamnameservers,omitempty"`
 	// ReverseCIDRs
-	ReverseCIDRs []string `yaml:"reversecidrs" json:"reversecidrs,omitempty"`
+	ReverseCIDRs []string `yaml:"reversecidrs,omitempty" json:"reversecidrs,omitempty"`
 	// Stubdomains
-	StubDomains map[string][]string `yaml:"stubdomains" json:"stubdomains,omitempty"`
+	StubDomains map[string][]string `yaml:"stubdomains,omitempty" json:"stubdomains,omitempty"`
 	// NodeSelector key pair
-	NodeSelector map[string]string `yaml:"node_selector" json:"nodeSelector,omitempty"`
+	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Nodelocal DNS
-	Nodelocal *Nodelocal `yaml:"nodelocal" json:"nodelocal,omitempty"`
+	Nodelocal *Nodelocal `yaml:"nodelocal,omitempty" json:"nodelocal,omitempty"`
 	// Update strategy
-	UpdateStrategy *DeploymentStrategy `yaml:"update_strategy" json:"updateStrategy,omitempty"`
+	UpdateStrategy *DeploymentStrategy `yaml:"update_strategy,omitempty" json:"updateStrategy,omitempty"`
 	// Autoscaler fields to determine number of dns replicas
-	LinearAutoscalerParams *LinearAutoscalerParams `yaml:"linear_autoscaler_params" json:"linearAutoscalerParams,omitempty"`
+	LinearAutoscalerParams *LinearAutoscalerParams `yaml:"linear_autoscaler_params,omitempty" json:"linearAutoscalerParams,omitempty"`
 	// Tolerations for Deployments
-	Tolerations []v1.Toleration `yaml:"tolerations" json:"tolerations,omitempty"`
+	Tolerations []v1.Toleration `yaml:"tolerations,omitempty" json:"tolerations,omitempty"`
 }
 
 type Nodelocal struct {
 	// link-local IP for nodelocal DNS
-	IPAddress string `yaml:"ip_address" json:"ipAddress,omitempty"`
+	IPAddress string `yaml:"ip_address,omitempty" json:"ipAddress,omitempty"`
 	// Nodelocal DNS daemonset upgrade strategy
-	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy" json:"updateStrategy,omitempty"`
+	UpdateStrategy *DaemonSetUpdateStrategy `yaml:"update_strategy,omitempty" json:"updateStrategy,omitempty"`
 	// NodeSelector key pair
-	NodeSelector map[string]string `yaml:"node_selector" json:"nodeSelector,omitempty"`
+	NodeSelector map[string]string `yaml:"node_selector,omitempty" json:"nodeSelector,omitempty"`
 	// Priority class name for NodeLocal's "node-local-dns" daemonset
-	NodeLocalDNSPriorityClassName string `yaml:"node_local_dns_priority_class_name" json:"nodeLocalDnsPriorityClassName,omitempty"`
+	NodeLocalDNSPriorityClassName string `yaml:"node_local_dns_priority_class_name,omitempty" json:"nodeLocalDnsPriorityClassName,omitempty"`
 }
 
 // LinearAutoscalerParams contains fields expected by the cluster-proportional-autoscaler https://github.com/kubernetes-incubator/cluster-proportional-autoscaler/blob/0c61e63fc81449abdd52315aa27179a17e5d1580/pkg/autoscaler/controller/linearcontroller/linear_controller.go#L50
 type LinearAutoscalerParams struct {
-	CoresPerReplica           float64 `yaml:"cores_per_replica" json:"coresPerReplica,omitempty" norman:"default=128"`
-	NodesPerReplica           float64 `yaml:"nodes_per_replica" json:"nodesPerReplica,omitempty" norman:"default=4"`
+	CoresPerReplica           float64 `yaml:"cores_per_replica,omitempty" json:"coresPerReplica,omitempty" norman:"default=128"`
+	NodesPerReplica           float64 `yaml:"nodes_per_replica,omitempty" json:"nodesPerReplica,omitempty" norman:"default=4"`
 	Min                       int     `yaml:"min" json:"min,omitempty" norman:"default=1"`
 	Max                       int     `yaml:"max" json:"max,omitempty"`
-	PreventSinglePointFailure bool    `yaml:"prevent_single_point_failure" json:"preventSinglePointFailure,omitempty" norman:"default=true"`
+	PreventSinglePointFailure bool    `yaml:"prevent_single_point_failure,omitempty" json:"preventSinglePointFailure,omitempty" norman:"default=true"`
 }
 
 type RKETaint struct {
-	Key       string         `json:"key,omitempty" yaml:"key"`
-	Value     string         `json:"value,omitempty" yaml:"value"`
-	Effect    v1.TaintEffect `json:"effect,omitempty" yaml:"effect"`
+	Key       string         `json:"key,omitempty" yaml:"key,omitempty"`
+	Value     string         `json:"value,omitempty" yaml:"value,omitempty"`
+	Effect    v1.TaintEffect `json:"effect,omitempty" yaml:"effect,omitempty"`
 	TimeAdded *metav1.Time   `json:"timeAdded,omitempty" yaml:"timeAdded,omitempty"`
 }
 
 type SecretsEncryptionConfig struct {
 	// Enable/disable secrets encryption provider config
-	Enabled bool `yaml:"enabled" json:"enabled,omitempty"`
+	Enabled bool `yaml:"enabled,omitempty" json:"enabled,omitempty"`
 	// Custom Encryption Provider configuration object
-	CustomConfig *configv1.EncryptionConfiguration `yaml:"custom_config" json:"customConfig,omitempty"`
+	CustomConfig *configv1.EncryptionConfiguration `yaml:"custom_config,omitepmty" json:"customConfig,omitempty" norman:"type=map[json]"`
 }
 
 type File struct {
@@ -995,15 +995,15 @@ type File struct {
 type NodeDrainInput struct {
 	// Drain node even if there are pods not managed by a ReplicationController, Job, or DaemonSet
 	// Drain will not proceed without Force set to true if there are such pods
-	Force bool `yaml:"force" json:"force,omitempty"`
+	Force bool `yaml:"force,omitempty" json:"force,omitempty"`
 	// If there are DaemonSet-managed pods, drain will not proceed without IgnoreDaemonSets set to true
 	// (even when set to true, kubectl won't delete pods - so setting default to true)
-	IgnoreDaemonSets *bool `yaml:"ignore_daemonsets" json:"ignoreDaemonSets,omitempty" norman:"default=true"`
+	IgnoreDaemonSets *bool `yaml:"ignore_daemonsets,omitempty" json:"ignoreDaemonSets,omitempty" norman:"default=true"`
 	// Continue even if there are pods using emptyDir
-	DeleteLocalData bool `yaml:"delete_local_data" json:"deleteLocalData,omitempty"`
+	DeleteLocalData bool `yaml:"delete_local_data,omitempty" json:"deleteLocalData,omitempty"`
 	//Period of time in seconds given to each pod to terminate gracefully.
 	// If negative, the default value specified in the pod will be used
-	GracePeriod int `yaml:"grace_period" json:"gracePeriod,omitempty" norman:"default=-1"`
+	GracePeriod int `yaml:"grace_period,omitempty" json:"gracePeriod,omitempty" norman:"default=-1"`
 	// Time to wait (in seconds) before giving up for one try
 	Timeout int `yaml:"timeout" json:"timeout" norman:"min=1,max=10800,default=120"`
 }
