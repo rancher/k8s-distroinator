@@ -634,6 +634,7 @@ type AciNetworkProvider struct {
 	RunGbpContainer          string   `yaml:"run_gbp_container,omitempty" json:"runGbpContainer,omitempty"`
 	RunOpflexServerContainer string   `yaml:"run_opflex_server_container,omitempty" json:"runOpflexServerContainer,omitempty"`
 	OpflexServerPort         string   `yaml:"opflex_server_port,omitempty" json:"opflexServerPort,omitempty"`
+	DisableMultus            string   `yaml:"disable_multus,omitempty" json:"disableMultus,omitempty"`
 }
 
 type KubernetesServicesOptions struct {

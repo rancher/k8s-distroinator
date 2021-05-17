@@ -139,6 +139,7 @@ const (
 	AciRunGbpContainer          = "aci_run_gbp_container"
 	AciRunOpflexServerContainer = "aci_run_opflex_server_container"
 	AciOpflexServerPort         = "aci_opflex_server_port"
+	AciDisableMultus            = "aci_disable_multus"
 	// List of map keys to be used with network templates
 
 	// EtcdEndpoints is the server address for Etcd, used by calico
@@ -269,6 +270,7 @@ const (
 	NodeSelector                           = "NodeSelector"
 	UpdateStrategy                         = "UpdateStrategy"
 	Tolerations                            = "Tolerations"
+	DisableMultus                          = "DisableMultus"
 )
 
 var EtcdPortList = []string{
@@ -545,6 +547,7 @@ func (c *Cluster) doAciDeploy(ctx context.Context, data map[string]interface{}) 
 		RunGbpContainer:          c.Network.Options[AciRunGbpContainer],
 		RunOpflexServerContainer: c.Network.Options[AciRunOpflexServerContainer],
 		OpflexServerPort:         c.Network.Options[AciOpflexServerPort],
+		DisableMultus:            c.Network.Options[AciDisableMultus],
 		AciCniDeployContainer:    c.SystemImages.AciCniDeployContainer,
 		AciHostContainer:         c.SystemImages.AciHostContainer,
 		AciOpflexContainer:       c.SystemImages.AciOpflexContainer,
