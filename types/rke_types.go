@@ -5,7 +5,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	apiserverv1alpha1 "k8s.io/apiserver/pkg/apis/apiserver/v1alpha1"
 	auditv1 "k8s.io/apiserver/pkg/apis/audit/v1"
-	apiserverconfig "k8s.io/apiserver/pkg/apis/config"
+	configv1 "k8s.io/apiserver/pkg/apis/config/v1"
 )
 
 type RancherKubernetesEngineConfig struct {
@@ -991,7 +991,7 @@ type SecretsEncryptionConfig struct {
 	// Enable/disable secrets encryption provider config
 	Enabled bool `yaml:"enabled" json:"enabled,omitempty"`
 	// Custom Encryption Provider configuration object
-	CustomConfig *apiserverconfig.EncryptionConfiguration `yaml:"custom_config" json:"customConfig,omitempty" norman:"type=map[json]"`
+	CustomConfig *configv1.EncryptionConfiguration `yaml:"custom_config" json:"customConfig,omitempty"`
 }
 
 type File struct {

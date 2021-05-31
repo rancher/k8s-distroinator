@@ -507,16 +507,7 @@ func disabledProviderFileFromKey(keyList interface{}) (string, error) {
 }
 
 func (c *Cluster) readEncryptionCustomConfig() (string, error) {
-	// directly marshalling apiserverconfig.EncryptionConfiguration to yaml breaks things because TypeMeta
-	// is nested and all fields don't have tags. apiserverconfigv1 has json tags only. So we do this as a work around.
-
-	out := apiserverconfigv1.EncryptionConfiguration{}
-	err := apiserverconfigv1.Convert_config_EncryptionConfiguration_To_v1_EncryptionConfiguration(
-		c.RancherKubernetesEngineConfig.Services.KubeAPI.SecretsEncryptionConfig.CustomConfig, &out, nil)
-	if err != nil {
-		return "", err
-	}
-	jsonConfig, err := json.Marshal(out)
+	jsonConfig, err := json.Marshal(c.RancherKubernetesEngineConfig.Services.KubeAPI.SecretsEncryptionConfig.CustomConfig)
 	if err != nil {
 		return "", err
 	}
@@ -529,7 +520,7 @@ func (c *Cluster) readEncryptionCustomConfig() (string, error) {
 		struct{ CustomConfig string }{CustomConfig: string(yamlConfig)})
 }
 
-func resolveCustomEncryptionConfig(clusterFile string) (string, *apiserverconfig.EncryptionConfiguration, error) {
+func resolveCustomEncryptionConfig(clusterFile string) (string, *apiserverconfigv1.EncryptionConfiguration, error) {
 	var err error
 	var r map[string]interface{}
 	err = ghodssyaml.Unmarshal([]byte(clusterFile), &r)
@@ -559,7 +550,7 @@ func resolveCustomEncryptionConfig(clusterFile string) (string, *apiserverconfig
 	return clusterFile, nil, nil
 }
 
-func parseCustomConfig(customConfig map[string]interface{}) (*apiserverconfig.EncryptionConfiguration, error) {
+func parseCustomConfig(customConfig map[string]interface{}) (*apiserverconfigv1.EncryptionConfiguration, error) {
 	var err error
 
 	data, err := json.Marshal(customConfig)
@@ -583,7 +574,7 @@ func parseCustomConfig(customConfig map[string]interface{}) (*apiserverconfig.En
 		return nil, fmt.Errorf("error decoding data: %v", err)
 	}
 
-	decodedConfig, ok := decodedObj.(*apiserverconfig.EncryptionConfiguration)
+	decodedConfig, ok := decodedObj.(*apiserverconfigv1.EncryptionConfiguration)
 	if !ok {
 		return nil, fmt.Errorf("unexpected type: %T", objType)
 	}

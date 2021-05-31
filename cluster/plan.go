@@ -268,10 +268,10 @@ func (c *Cluster) BuildKubeAPIProcess(host *hosts.Host, serviceOptions v3.Kubern
 		services.SidekickContainerName,
 	}
 	Binds := []string{
-		fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
+		fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
 	}
 	if c.Services.KubeAPI.AuditLog != nil && c.Services.KubeAPI.AuditLog.Enabled {
-		Binds = append(Binds, fmt.Sprintf("%s:/var/log/kube-audit:z", path.Join(host.PrefixPath, "/var/log/kube-audit")))
+		Binds = append(Binds, fmt.Sprintf("%s:/var/log/kube-audit", path.Join(host.PrefixPath, "/var/log/kube-audit")))
 		bytes, err := yaml.Marshal(c.Services.KubeAPI.AuditLog.Configuration.Policy)
 		if err != nil {
 			logrus.Warnf("Error while marshalling auditlog policy: %v", err)
@@ -360,7 +360,7 @@ func (c *Cluster) BuildKubeControllerProcess(host *hosts.Host, serviceOptions v3
 		services.SidekickContainerName,
 	}
 	Binds := []string{
-		fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
+		fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
 	}
 
 	for arg, value := range c.Services.KubeController.ExtraArgs {
@@ -483,29 +483,29 @@ func (c *Cluster) BuildKubeletProcess(host *hosts.Host, serviceOptions v3.Kubern
 		}
 	} else {
 		Binds = []string{
-			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
-			"/etc/cni:/etc/cni:rw,z",
-			"/opt/cni:/opt/cni:rw,z",
-			fmt.Sprintf("%s:/var/lib/cni:z", path.Join(host.PrefixPath, "/var/lib/cni")),
-			"/var/lib/calico:/var/lib/calico:z",
+			fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
+			"/etc/cni:/etc/cni:rw",
+			"/opt/cni:/opt/cni:rw",
+			fmt.Sprintf("%s:/var/lib/cni", path.Join(host.PrefixPath, "/var/lib/cni")),
+			"/var/lib/calico:/var/lib/calico",
 			"/etc/resolv.conf:/etc/resolv.conf",
 			"/sys:/sys:rprivate",
-			host.DockerInfo.DockerRootDir + ":" + host.DockerInfo.DockerRootDir + ":rw,rslave,z",
-			fmt.Sprintf("%s:%s:shared,z", path.Join(host.PrefixPath, "/var/lib/kubelet"), path.Join(host.PrefixPath, "/var/lib/kubelet")),
-			"/var/lib/rancher:/var/lib/rancher:shared,z",
+			host.DockerInfo.DockerRootDir + ":" + host.DockerInfo.DockerRootDir + ":rw,rslave",
+			fmt.Sprintf("%s:%s:shared", path.Join(host.PrefixPath, "/var/lib/kubelet"), path.Join(host.PrefixPath, "/var/lib/kubelet")),
+			"/var/lib/rancher:/var/lib/rancher:shared",
 			"/var/run:/var/run:rw,rprivate",
 			"/run:/run:rprivate",
 			fmt.Sprintf("%s:/etc/ceph", path.Join(host.PrefixPath, "/etc/ceph")),
 			"/dev:/host/dev:rprivate",
-			"/var/log/containers:/var/log/containers:z",
-			"/var/log/pods:/var/log/pods:z",
+			"/var/log/containers:/var/log/containers",
+			"/var/log/pods:/var/log/pods",
 			"/usr:/host/usr:ro",
 			"/etc:/host/etc:ro",
 		}
 
 		// Special case to simplify using flex volumes
 		if path.Join(host.PrefixPath, "/var/lib/kubelet") != "/var/lib/kubelet" {
-			Binds = append(Binds, "/var/lib/kubelet/volumeplugins:/var/lib/kubelet/volumeplugins:shared,z")
+			Binds = append(Binds, "/var/lib/kubelet/volumeplugins:/var/lib/kubelet/volumeplugins:shared")
 		}
 	}
 	Binds = append(Binds, host.GetExtraBinds(kubelet.BaseService)...)
@@ -614,7 +614,7 @@ func (c *Cluster) BuildKubeProxyProcess(host *hosts.Host, serviceOptions v3.Kube
 		}
 	} else {
 		Binds = []string{
-			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
+			fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
 			"/run:/run",
 		}
 
@@ -732,7 +732,7 @@ func (c *Cluster) BuildSchedulerProcess(host *hosts.Host, serviceOptions v3.Kube
 		services.SidekickContainerName,
 	}
 	Binds := []string{
-		fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
+		fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
 	}
 
 	for arg, value := range c.Services.Scheduler.ExtraArgs {
@@ -829,15 +829,11 @@ func (c *Cluster) BuildSidecarProcess(host *hosts.Host) v3.Process {
 func (c *Cluster) BuildEtcdProcess(host *hosts.Host, etcdHosts []*hosts.Host, serviceOptions v3.KubernetesServicesOptions) v3.Process {
 	nodeName := pki.GetCrtNameForHost(host, pki.EtcdCertName)
 	initCluster := ""
-	architecture := "amd64"
+	architecture := host.DockerInfo.Architecture
 	if len(etcdHosts) == 0 {
 		initCluster = services.GetEtcdInitialCluster(c.EtcdHosts)
-		if len(c.EtcdHosts) > 0 {
-			architecture = c.EtcdHosts[0].DockerInfo.Architecture
-		}
 	} else {
 		initCluster = services.GetEtcdInitialCluster(etcdHosts)
-		architecture = etcdHosts[0].DockerInfo.Architecture
 	}
 
 	clusterState := "new"
@@ -906,8 +902,8 @@ func (c *Cluster) BuildEtcdProcess(host *hosts.Host, etcdHosts []*hosts.Host, se
 	}
 
 	Binds := []string{
-		fmt.Sprintf("%s:%s:z", path.Join(host.PrefixPath, "/var/lib/etcd"), services.EtcdDataDir),
-		fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
+		fmt.Sprintf("%s:%s", path.Join(host.PrefixPath, "/var/lib/etcd"), services.EtcdDataDir),
+		fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
 	}
 
 	if serviceOptions.Etcd != nil {

@@ -259,7 +259,7 @@ func GetCrtNameForHost(host *hosts.Host, prefix string) string {
 	} else {
 		newAddress = strings.Replace(host.Address, ".", "-", -1)
 	}
-	return prefix + "-" + newAddress
+	return prefix + "-" + strings.ToLower(newAddress)
 }
 
 func GetCertPath(name string) string {
@@ -592,7 +592,7 @@ func ReadCertsAndKeysFromDir(certDir string) (map[string]CertificatePKI, error) 
 
 	for _, file := range files {
 		logrus.Debugf("[certificates] reading file %s from directory [%s]", file.Name(), certDir)
-		if !strings.HasSuffix(file.Name(), "-key.pem") && !strings.HasSuffix(file.Name(), "-csr.pem") {
+		if strings.HasSuffix(file.Name(), ".pem") && !strings.HasSuffix(file.Name(), "-key.pem") && !strings.HasSuffix(file.Name(), "-csr.pem") {
 			// fetching cert
 			cert, err := getCertFromFile(certDir, file.Name())
 			if err != nil {

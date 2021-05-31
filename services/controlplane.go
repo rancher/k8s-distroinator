@@ -380,7 +380,7 @@ func RunGetStateFileFromConfigMap(ctx context.Context, controlPlaneHost *hosts.H
 	}
 	hostCfg := &container.HostConfig{
 		Binds: []string{
-			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(controlPlaneHost.PrefixPath, "/etc/kubernetes")),
+			fmt.Sprintf("%s:/etc/kubernetes", path.Join(controlPlaneHost.PrefixPath, "/etc/kubernetes")),
 		},
 		NetworkMode:   container.NetworkMode("host"),
 		RestartPolicy: container.RestartPolicy{Name: "no"},

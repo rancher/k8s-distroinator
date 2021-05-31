@@ -51,6 +51,7 @@ const (
 	CleanerContainerName    = "kube-cleaner"
 	LogCleanerContainerName = "rke-log-cleaner"
 	RKELogsPath             = "/var/lib/rancher/rke/log"
+	SELinuxLabel            = "label=type:rke_container_t"
 
 	B2DOS               = "Boot2Docker"
 	B2DPrefixPath       = "/mnt/sda1/rke"
@@ -306,10 +307,13 @@ func buildCleanerConfig(host *Host, toCleanDirs []string, cleanerImage string) (
 	}
 	bindMounts := []string{}
 	for _, vol := range toCleanDirs {
-		bindMounts = append(bindMounts, fmt.Sprintf("%s:%s:z", vol, vol))
+		bindMounts = append(bindMounts, fmt.Sprintf("%s:%s", vol, vol))
 	}
 	hostCfg := &container.HostConfig{
 		Binds: bindMounts,
+	}
+	if IsDockerSELinuxEnabled(host) {
+		hostCfg.SecurityOpt = append(hostCfg.SecurityOpt, SELinuxLabel)
 	}
 	return imageCfg, hostCfg
 }

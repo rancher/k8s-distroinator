@@ -98,6 +98,7 @@ const (
 	NameLabel              = "name"
 
 	WorkerThreads = util.WorkerThreads
+	SELinuxLabel  = services.SELinuxLabel
 
 	serviceAccountTokenFileParam = "service-account-key-file"
 

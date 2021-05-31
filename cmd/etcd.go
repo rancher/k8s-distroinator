@@ -313,7 +313,7 @@ func SnapshotSaveEtcdHostsFromCli(ctx *cli.Context) error {
 	etcdSnapshotName := ctx.String("name")
 	if etcdSnapshotName == "" {
 		etcdSnapshotName = fmt.Sprintf("rke_etcd_snapshot_%s", time.Now().Format(time.RFC3339))
-		logrus.Warnf("Name of the snapshot is not specified using [%s]", etcdSnapshotName)
+		logrus.Warnf("Name of the snapshot is not specified, using [%s]", etcdSnapshotName)
 	}
 	// setting up the flags
 	flags := cluster.GetExternalFlags(false, false, false, false, "", filePath)

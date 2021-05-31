@@ -127,7 +127,7 @@ for pid in "${!pid_results[@]}"; do
                     echo_with_time "[FAIL] Rollout of $kind $name in namespace $namespace for ${pid_to_version} did not complete in 5 minutes"
                     rollout_results["${pid}"]="1"
                     /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
-                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" -n kube-system get pods
+                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces
                 else
                     echo_with_time "[OK] Rollout of $kind $name in namespace $namespace for ${pid_to_version} complete"
                     rollout_results["${pid}"]="0"
@@ -137,7 +137,7 @@ for pid in "${!pid_results[@]}"; do
     else
         rkeup_results["${pid}"]="1"
         /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
-        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" -n kube-system get pods
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces
     fi
 done
 
@@ -235,7 +235,7 @@ for pid in "${!pid_upgrade_results[@]}"; do
                     echo_with_time "[FAIL] Rollout of $kind $name in namespace $namespace for upgrade ${pid_upgrade_to_version} to "${upgraded_version}" did not complete in 5 minutes"
                     rollout_upgrade_results["${pid}"]="1"
                     /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
-                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" -n kube-system get pods
+                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get pods --all-namespaces
                 else
                     echo_with_time "[OK] Rollout of $kind $name in namespace $namespace for upgrade ${pid_upgrade_to_version} to "${upgraded_version}" complete"
                     rollout_upgrade_results["${pid}"]="0"
@@ -245,7 +245,7 @@ for pid in "${!pid_upgrade_results[@]}"; do
     else
         rkeup_upgrade_results["${pid}"]="1"
         /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pids_to_version["${pid}"]}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
-        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pids_to_version["${pid}"]}.yml" -n kube-system get pods
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pids_to_version["${pid}"]}.yml" get pods --all-namespaces
     fi
 done
 
