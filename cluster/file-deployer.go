@@ -60,9 +60,15 @@ func doDeployFile(ctx context.Context, host *hosts.Host, fileName, fileContents,
 	}
 	hostCfg := &container.HostConfig{
 		Binds: []string{
-			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
+			fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
 		},
 	}
+	if hosts.IsDockerSELinuxEnabled(host) {
+		// We apply the label because we do not rewrite SELinux labels anymore on volume mounts (no :z)
+		logrus.Debugf("Applying security opt label [%s] for [%s] container on host [%s]", SELinuxLabel, ContainerName, host.Address)
+		hostCfg.SecurityOpt = append(hostCfg.SecurityOpt, SELinuxLabel)
+	}
+
 	if err := docker.DoRunOnetimeContainer(ctx, host.DClient, imageCfg, hostCfg, ContainerName, host.Address, ServiceName, prsMap); err != nil {
 		return err
 	}

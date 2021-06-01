@@ -68,6 +68,16 @@ func (c *Cluster) DeployRestoreCerts(ctx context.Context, clusterCerts map[strin
 }
 
 func (c *Cluster) DeployStateFile(ctx context.Context, stateFilePath, snapshotName string) error {
+	stateFileExists, err := util.IsFileExists(stateFilePath)
+	if err != nil {
+		logrus.Warnf("Could not read cluster state file from [%s], error: [%v]. Snapshot will be created without cluster state file. You can retrieve the cluster state file using 'rke util get-state-file'", stateFilePath, err)
+		return nil
+	}
+	if !stateFileExists {
+		logrus.Warnf("Could not read cluster state file from [%s], file does not exist. Snapshot will be created without cluster state file. You can retrieve the cluster state file using 'rke util get-state-file'", stateFilePath)
+		return nil
+	}
+
 	var errgrp errgroup.Group
 	hostsQueue := util.GetObjectQueue(c.EtcdHosts)
 	for w := 0; w < WorkerThreads; w++ {

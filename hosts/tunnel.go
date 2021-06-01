@@ -18,10 +18,6 @@ import (
 	"golang.org/x/crypto/ssh/agent"
 )
 
-const (
-	DockerAPIVersion = "1.24"
-)
-
 func (h *Host) TunnelUp(ctx context.Context, dialerFactory DialerFactory, clusterPrefixPath string, clusterVersion string) error {
 	if h.DClient != nil {
 		return nil
@@ -34,7 +30,7 @@ func (h *Host) TunnelUp(ctx context.Context, dialerFactory DialerFactory, cluste
 	// set Docker client
 	logrus.Debugf("Connecting to Docker API for host [%s]", h.Address)
 	h.DClient, err = client.NewClientWithOpts(
-		client.WithVersion(DockerAPIVersion),
+		client.WithAPIVersionNegotiation(),
 		client.WithHTTPClient(httpClient))
 	if err != nil {
 		return fmt.Errorf("Can't initiate NewClient: %v", err)

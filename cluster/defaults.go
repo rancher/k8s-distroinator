@@ -142,7 +142,6 @@ var (
 	}
 	DefaultClusterProportionalAutoscalerLinearParams = v3.LinearAutoscalerParams{CoresPerReplica: 128, NodesPerReplica: 4, Min: 1, PreventSinglePointFailure: true}
 	DefaultMonitoringAddonReplicas                   = int32(1)
-	DefaultDefaultBackend                            = true
 )
 
 type ExternalFlags struct {
@@ -818,7 +817,23 @@ func (c *Cluster) setAddonsDefaults() {
 	}
 
 	if c.Ingress.DefaultBackend == nil {
-		c.Ingress.DefaultBackend = &DefaultDefaultBackend
+		defaultBackend := true
+		k8sVersion := c.RancherKubernetesEngineConfig.Version
+		toMatch, err := semver.Make(k8sVersion[1:])
+		if err != nil {
+			logrus.Warnf("Cluster version [%s] can not be parsed as semver", k8sVersion)
+		}
+		logrus.Debugf("Checking ingress default backend for cluster version [%s]", k8sVersion)
+		// default backend will be false for k8s 1.21 and up
+		disableIngressDefaultBackendRange, err := semver.ParseRange(">=1.21.0-rancher0")
+		if err != nil {
+			logrus.Warnf("Failed to parse semver range for checking ingress default backend")
+		}
+		if disableIngressDefaultBackendRange(toMatch) {
+			logrus.Debugf("Cluster version [%s] needs to have ingress default backend disabled", k8sVersion)
+			defaultBackend = false
+		}
+		c.Ingress.DefaultBackend = &defaultBackend
 	}
 }
 

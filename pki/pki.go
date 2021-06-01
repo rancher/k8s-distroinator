@@ -112,8 +112,8 @@ func SaveBackupBundleOnHost(ctx context.Context, host *hosts.Host, alpineSystemI
 	hostCfg := &container.HostConfig{
 
 		Binds: []string{
-			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
-			fmt.Sprintf("%s:/backup:z", etcdSnapshotPath),
+			fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
+			fmt.Sprintf("%s:/backup", etcdSnapshotPath),
 		},
 		Privileged: true,
 	}
@@ -149,8 +149,8 @@ func ExtractBackupBundleOnHost(ctx context.Context, host *hosts.Host, alpineSyst
 	hostCfg := &container.HostConfig{
 
 		Binds: []string{
-			fmt.Sprintf("%s:/etc/kubernetes:z", path.Join(host.PrefixPath, "/etc/kubernetes")),
-			fmt.Sprintf("%s:/backup:z", etcdSnapshotPath),
+			fmt.Sprintf("%s:/etc/kubernetes", path.Join(host.PrefixPath, "/etc/kubernetes")),
+			fmt.Sprintf("%s:/backup", etcdSnapshotPath),
 		},
 		Privileged: true,
 	}
