@@ -317,6 +317,10 @@ func doDeployWorkerPlane(ctx context.Context, host *hosts.Host,
 	if err := runKubelet(ctx, host, localConnDialerFactory, prsMap, processMap[KubeletContainerName], certMap, alpineImage); err != nil {
 		return err
 	}
+	if processMap[KubeproxyContainerName].Name == "" {
+		log.Warnf(ctx, "Kubeproxy process not configured")
+		return nil
+	}
 	return runKubeproxy(ctx, host, localConnDialerFactory, prsMap, processMap[KubeproxyContainerName], alpineImage)
 }
 

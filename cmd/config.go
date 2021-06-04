@@ -380,7 +380,7 @@ func getAuthzConfig(reader *bufio.Reader) (*v3.AuthzConfig, error) {
 func getNetworkConfig(reader *bufio.Reader) (*v3.NetworkConfig, error) {
 	networkConfig := v3.NetworkConfig{}
 
-	networkPlugin, err := getConfig(reader, "Network Plugin Type (flannel, calico, weave, canal, aci)", cluster.DefaultNetworkPlugin)
+	networkPlugin, err := getConfig(reader, "Network Plugin Type (flannel, calico, weave, canal, aci, kube-router)", cluster.DefaultNetworkPlugin)
 	if err != nil {
 		return nil, err
 	}

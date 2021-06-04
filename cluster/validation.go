@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"strings"
 
+	v1 "k8s.io/api/core/v1"
+
 	"github.com/rancher/rke/log"
 	"github.com/rancher/rke/metadata"
 	"github.com/rancher/rke/pki"
 	"github.com/rancher/rke/services"
 	"github.com/rancher/rke/util"
-	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/validation"
 )
 
@@ -195,7 +196,7 @@ func validateAciCloudOptionsDisabled(option string, value string) (string, strin
 }
 
 func validateNetworkOptions(c *Cluster) error {
-	if c.Network.Plugin != NoNetworkPlugin && c.Network.Plugin != FlannelNetworkPlugin && c.Network.Plugin != CalicoNetworkPlugin && c.Network.Plugin != CanalNetworkPlugin && c.Network.Plugin != WeaveNetworkPlugin && c.Network.Plugin != AciNetworkPlugin {
+	if c.Network.Plugin != NoNetworkPlugin && c.Network.Plugin != FlannelNetworkPlugin && c.Network.Plugin != CalicoNetworkPlugin && c.Network.Plugin != CanalNetworkPlugin && c.Network.Plugin != WeaveNetworkPlugin && c.Network.Plugin != AciNetworkPlugin && c.Network.Plugin != KubeRouterNetworkPlugin {
 		return fmt.Errorf("Network plugin [%s] is not supported", c.Network.Plugin)
 	}
 	if c.Network.Plugin == FlannelNetworkPlugin && c.Network.MTU != 0 {
@@ -528,6 +529,10 @@ func validateNetworkImages(c *Cluster) error {
 		//Skipping Cloud image validation.
 		//c.SystemImages.AciOpflexServerContainer
 		//c.SystemImages.AciGbpServerContainer
+	} else if c.Network.Plugin == KubeRouterNetworkPlugin {
+		if len(c.SystemImages.KubeRouterCNI) == 0 {
+			return fmt.Errorf("kube-router cni image is not populated")
+		}
 	}
 	return nil
 }

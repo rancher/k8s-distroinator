@@ -12,6 +12,7 @@ const (
 	Flannel       = "flannel"
 	Weave         = "weave"
 	Aci           = "aci"
+	KubeRouter    = "kube-router"
 	CoreDNS       = "coreDNS"
 	KubeDNS       = "kubeDNS"
 	MetricsServer = "metricsServer"
