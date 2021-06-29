@@ -57,6 +57,8 @@ const (
 	MaxEtcdNoStrictTLSVersion = "v3.4.14-rancher99"
 
 	EncryptionProviderConfigArgument = "encryption-provider-config"
+
+	KubeletCRIDockerdNameEnv = "RKE_KUBELET_CRIDOCKERD"
 )
 
 var admissionControlOptionNames = []string{"enable-admission-plugins", "admission-control"}
@@ -436,6 +438,10 @@ func (c *Cluster) BuildKubeletProcess(host *hosts.Host, serviceOptions v3.Kubern
 		CommandArgs["tls-cert-file"] = pki.GetCertPath(pki.GetCrtNameForHost(host, pki.KubeletCertName))
 		CommandArgs["tls-private-key-file"] = pki.GetCertPath(fmt.Sprintf("%s-key", pki.GetCrtNameForHost(host, pki.KubeletCertName)))
 	}
+	if c.IsCRIDockerdEnabled() {
+		CommandArgs["container-runtime"] = "remote"
+		CommandArgs["container-runtime-endpoint"] = "/var/run/dockershim.sock"
+	}
 
 	if serviceOptions.Kubelet != nil {
 		for k, v := range serviceOptions.Kubelet {
@@ -507,6 +513,12 @@ func (c *Cluster) BuildKubeletProcess(host *hosts.Host, serviceOptions v3.Kubern
 	Binds = append(Binds, host.GetExtraBinds(kubelet.BaseService)...)
 
 	Env := host.GetExtraEnv(kubelet.BaseService)
+
+	if c.IsCRIDockerdEnabled() {
+		Env = append(Env,
+			// Enable running cri-dockerd
+			fmt.Sprintf("%s=%s", KubeletCRIDockerdNameEnv, "true"))
+	}
 
 	if len(c.CloudProvider.Name) > 0 {
 		Env = append(Env,
@@ -1095,4 +1107,14 @@ func appendArgs(command []string, args map[string]string) []string {
 		command = append(command, fmt.Sprintf("--%s=%s", arg, value))
 	}
 	return command
+}
+
+func (c *Cluster) IsCRIDockerdEnabled() bool {
+	if c == nil {
+		return false
+	}
+	if c.EnableCRIDockerd != nil && *c.EnableCRIDockerd {
+		return true
+	}
+	return false
 }

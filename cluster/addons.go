@@ -525,10 +525,7 @@ func (c *Cluster) doAddonDelete(ctx context.Context, resourceName string, isCrit
 		return err
 	}
 
-	if err := k8s.DeleteK8sSystemJob(deleteJob, k8sClient, c.AddonJobTimeout); err != nil {
-		return err
-	}
-	return nil
+	return k8s.DeleteK8sSystemJob(deleteJob, k8sClient, c.AddonJobTimeout)
 
 }
 
@@ -562,10 +559,7 @@ func (c *Cluster) StoreAddonConfigMap(ctx context.Context, addonYaml string, add
 }
 
 func (c *Cluster) ApplySystemAddonExecuteJob(addonJob string, addonUpdated bool) error {
-	if err := k8s.ApplyK8sSystemJob(addonJob, c.LocalKubeConfigPath, c.K8sWrapTransport, c.AddonJobTimeout, addonUpdated); err != nil {
-		return err
-	}
-	return nil
+	return k8s.ApplyK8sSystemJob(addonJob, c.LocalKubeConfigPath, c.K8sWrapTransport, c.AddonJobTimeout, addonUpdated)
 }
 
 func (c *Cluster) deployIngress(ctx context.Context, data map[string]interface{}) error {

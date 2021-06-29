@@ -186,7 +186,7 @@ func GetClusterCertsFromNodes(ctx context.Context, kubeCluster *Cluster) (map[st
 	log.Infof(ctx, "[certificates] Fetching kubernetes certificates from nodes")
 	var err error
 	backupHosts := hosts.GetUniqueHostList(kubeCluster.EtcdHosts, kubeCluster.ControlPlaneHosts, nil)
-	certificates := map[string]pki.CertificatePKI{}
+	var certificates map[string]pki.CertificatePKI
 	for _, host := range backupHosts {
 		certificates, err = pki.FetchCertificatesFromHost(ctx, kubeCluster.EtcdHosts, host, kubeCluster.SystemImages.Alpine, kubeCluster.LocalKubeConfigPath, kubeCluster.PrivateRegistriesMap)
 		if certificates != nil {

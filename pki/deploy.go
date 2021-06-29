@@ -107,10 +107,7 @@ func DeployStateOnPlaneHost(ctx context.Context, host *hosts.Host, stateDownload
 		return err
 	}
 
-	if err := docker.DoRemoveContainer(ctx, host.DClient, StateDeployerContainerName, host.Address); err != nil {
-		return err
-	}
-	return nil
+	return docker.DoRemoveContainer(ctx, host.DClient, StateDeployerContainerName, host.Address)
 }
 
 func doRunDeployer(ctx context.Context, host *hosts.Host, containerEnv []string, certDownloaderImage string, prsMap map[string]v3.PrivateRegistry) error {

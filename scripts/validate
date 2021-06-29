@@ -5,16 +5,20 @@ cd $(dirname $0)/..
 
 echo Running validation
 
-PACKAGES=". $(find -name '*.go' | xargs -I{} dirname {} |  cut -f2 -d/ | sort -u | grep -Ev '(^\.$|.git|.trash-cache|vendor|bin|data)' | sed -e 's!^!./!' -e 's!$!/...!')"
+echo Running: golangci-lint
+golangci-lint run
 
-echo Running: go vet
-go vet ${PACKAGES}
-echo Running: golint
-for i in ${PACKAGES}; do
-    if [ -n "$(golint $i | grep -v 'should have comment.*or be unexported' | tee /dev/stderr)" ]; then
-        failed=true
-    fi
-done
-test -z "$failed"
-echo Running: go fmt
-test -z "$(go fmt ${PACKAGES} | tee /dev/stderr)"
+echo Tidying up modules
+go mod tidy
+
+echo Verifying modules
+go mod verify
+
+echo Generating files
+go generate
+
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+  echo "Encountered dirty repo!"
+  git status --porcelain --untracked-files=no
+  exit 1
+fi

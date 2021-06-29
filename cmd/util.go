@@ -84,11 +84,7 @@ func getKubeconfigFile(ctx *cli.Context) error {
 	}
 	kubeCluster, _ := tempCluster.GetClusterState(context.Background(), clusterState)
 
-	if err := cluster.RebuildKubeconfig(context.Background(), kubeCluster); err != nil {
-		return err
-	}
-
-	return nil
+	return cluster.RebuildKubeconfig(context.Background(), kubeCluster)
 }
 
 func getStateFile(ctx *cli.Context) error {
@@ -128,7 +124,13 @@ func getStateFile(ctx *cli.Context) error {
 	logrus.Infof("Successfully connected to server using kubeconfig, retrieved server version [%s]", serverVersion)
 	// Retrieve full-cluster-state configmap
 	k8sClient, err := k8s.NewClient(localKubeConfig, nil)
+	if err != nil {
+		return err
+	}
 	cfgMap, err := k8s.GetConfigMap(k8sClient, cluster.FullStateConfigMapName)
+	if err != nil {
+		return err
+	}
 	clusterData := cfgMap.Data[cluster.FullStateConfigMapName]
 	rkeFullState := &cluster.FullState{}
 	if err = json.Unmarshal([]byte(clusterData), rkeFullState); err != nil {
@@ -179,6 +181,10 @@ func RetrieveClusterStateConfigMap(
 		return APIURL, caCrt, clientCert, clientKey, nil, err
 	}
 	rkeFullState, err = cluster.StringToFullState(ctx, stateFile)
+
+	if err != nil {
+		return APIURL, caCrt, clientCert, clientKey, nil, err
+	}
 
 	// Move current state file
 	stateFilePath := cluster.GetStateFilePath(flags.ClusterFilePath, flags.ConfigDir)

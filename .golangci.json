@@ -1,0 +1,47 @@
+{
+    "linters": {
+        "disable-all": true,
+        "enable": [
+           "govet",
+           "revive",
+           "goimports",
+           "misspell",
+           "ineffassign",
+           "gofmt"
+        ]
+    },
+    "linters-settings": {
+        "govet": {
+            "check-shadowing": false
+        },
+        "gofmt": {
+            "simplify": false
+        }
+    },
+    "run": {
+        "skip-dirs": [
+            "vendor",
+            "tests",
+            "pkg/client",
+            "pkg/generated"
+        ],
+        "tests": false,
+        "timeout": "10m"
+    },
+    "issues": {
+        "exclude-rules": [
+            {
+                "linters": "govet",
+                "text": "^(nilness|structtag)"
+            },
+            {
+                "linters": "revive",
+                "text": "should have comment"
+            },
+            {
+                "linters": "revive",
+                "text": "should be of the form"
+            }
+        ]
+    }
+}

@@ -1,4 +1,5 @@
 #!/bin/bash
+NETWORK_PLUGIN=$1
 
 function kubectlinstall {
     k8sversion=$1
@@ -46,7 +47,6 @@ source $(dirname $0)/version
 
 cd $(dirname $0)/..
 
-
 # Get latest version from rke
 all_versions=$(./bin/rke --quiet config --all --list-version | sort -V)
 
@@ -69,7 +69,7 @@ for ver in "${!versions_to_test[@]}"; do
     echo_with_time "Testing version ${version_to_test}"
 
     # Create cluster yaml with random node names
-    node=$(cat /dev/urandom | tr -dc a-z | head -c${1:-8})
+    node=$(cat /dev/urandom | tr -dc a-z | head -c8)
     cat << EOF > "./bin/cluster-${version_to_test}.yml"
 kubernetes_version: ${version_to_test}
 nodes:
@@ -78,8 +78,12 @@ nodes:
   user: ubuntu
 EOF
 
+    if [ "x${NETWORK_PLUGIN}" != "x" ]; then
+        echo_with_time "Network plugin specified: ${NETWORK_PLUGIN}"
+        echo -e "network:\n  plugin: ${NETWORK_PLUGIN}" >> ./bin/cluster-${version_to_test}.yml
+    fi
+
     # Run rke - output to logs and track results.
-    export DOCKER_API_VERSION=1.24
     ./bin/rke up --dind --config "./bin/cluster-${version_to_test}.yml" 2>&1 >"./bin/cluster-${version_to_test}.log" &
     pids="$pids $!"
     pids_to_version["$!"]="${version_to_test}"
@@ -93,8 +97,8 @@ done
 # Wait for rke to finish
 for pid in $pids; do
     wait $pid
-    echo_with_time "PID ${pid} for ${pids_to_version["${pid}"]} is done"
     pid_results["${pid}"]="$?"
+    echo_with_time "PID ${pid} for ${pids_to_version["${pid}"]} is done"
 done
 
 # Stop tailing the logs
@@ -126,18 +130,20 @@ for pid in "${!pid_results[@]}"; do
                 if [ $? -ne 0 ]; then
                     echo_with_time "[FAIL] Rollout of $kind $name in namespace $namespace for ${pid_to_version} did not complete in 5 minutes"
                     rollout_results["${pid}"]="1"
-                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
-                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces
                 else
                     echo_with_time "[OK] Rollout of $kind $name in namespace $namespace for ${pid_to_version} complete"
                     rollout_results["${pid}"]="0"
                 fi
             done <<<$(/usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" -n $namespace get deploy,daemonset --no-headers -o custom-columns=NAME:.metadata.name,KIND:.kind --no-headers)
         done
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces -o jsonpath="{.items[*].spec.containers[*].image}" | tr -s '[[:space:]]' '\n' | sort -u
     else
         rkeup_results["${pid}"]="1"
         /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
         /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_to_version}.yml" get pods --all-namespaces -o jsonpath="{.items[*].spec.containers[*].image}" | tr -s '[[:space:]]' '\n' | sort -u
     fi
 done
 
@@ -184,7 +190,6 @@ for ver in "${!versions_to_test[@]}"; do
 
     echo_with_time "Upgrading cluster version ${versions_to_test["${ver}"]} to version ${upgrade_to_version}"
     # Run rke - output to logs and track results.
-    export DOCKER_API_VERSION=1.24
     ./bin/rke up --dind --config "./bin/cluster-${versions_to_test["${ver}"]}.yml" 2>&1 >"./bin/cluster-upgrade-${versions_to_test["${ver}"]}-${upgrade_to_version}.log" &
     pids_upgrade="$pids_upgrade $!"
     pids_upgrade_to_version["$!"]="${versions_to_test["${ver}"]}"
@@ -198,8 +203,8 @@ done
 # Wait for rke to finish
 for pid_upgrade in $pids_upgrade; do
     wait $pid_upgrade
-    echo_with_time "PID ${pid_upgrade} for upgrade of ${pids_upgrade_to_version["${pid_upgrade}"]} to "${version_to_upgraded_version["${pids_upgrade_to_version["${pid_upgrade}"]}"]}" is done"
     pid_upgrade_results["${pid_upgrade}"]="$?"
+    echo_with_time "PID ${pid_upgrade} for upgrade of ${pids_upgrade_to_version["${pid_upgrade}"]} to "${version_to_upgraded_version["${pids_upgrade_to_version["${pid_upgrade}"]}"]}" is done"
 done
 
 # Stop tailing the logs
@@ -234,18 +239,20 @@ for pid in "${!pid_upgrade_results[@]}"; do
                 if [ $? -ne 0 ]; then
                     echo_with_time "[FAIL] Rollout of $kind $name in namespace $namespace for upgrade ${pid_upgrade_to_version} to "${upgraded_version}" did not complete in 5 minutes"
                     rollout_upgrade_results["${pid}"]="1"
-                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
-                    /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get pods --all-namespaces
                 else
                     echo_with_time "[OK] Rollout of $kind $name in namespace $namespace for upgrade ${pid_upgrade_to_version} to "${upgraded_version}" complete"
                     rollout_upgrade_results["${pid}"]="0"
                 fi
             done <<<$(/usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" -n $namespace get deploy,daemonset --no-headers -o custom-columns=NAME:.metadata.name,KIND:.kind --no-headers)
         done
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get pods --all-namespaces
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pid_upgrade_to_version}.yml" get pods --all-namespaces -o jsonpath="{.items[*].spec.containers[*].image}" | tr -s '[[:space:]]' '\n' | sort -u
     else
         rkeup_upgrade_results["${pid}"]="1"
         /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pids_to_version["${pid}"]}.yml" get nodes -o go-template='{{range .items}}{{$node := .}}{{range .status.conditions}}{{$node.metadata.name}}{{": "}}{{.type}}{{":"}}{{.status}}{{"\n"}}{{end}}{{end}}'
         /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pids_to_version["${pid}"]}.yml" get pods --all-namespaces
+        /usr/local/bin/kubectl-${clusterk8sversion} --kubeconfig "./bin/kube_config_cluster-${pids_to_version["${pid}"]}.yml" get pods --all-namespaces -o jsonpath="{.items[*].spec.containers[*].image}" | tr -s '[[:space:]]' '\n' | sort -u
     fi
 done
 

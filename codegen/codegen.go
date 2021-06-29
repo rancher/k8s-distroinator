@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	defaultURL = "https://releases.rancher.com/kontainer-driver-metadata/dev-v2.5/data.json"
+	defaultURL = "https://releases.rancher.com/kontainer-driver-metadata/dev-v2.6/data.json"
 	dataFile   = "data/data.json"
 )
 
-// Codegen fetch data.json from https://releases.rancher.com/kontainer-driver-metadata/dev-v2.5/data.json and generates bindata
+// Codegen fetch data.json from https://releases.rancher.com/kontainer-driver-metadata/dev-v2.6/data.json and generates bindata
 func main() {
 	u := os.Getenv(metadata.RancherMetadataURLEnv)
 	if u == "" {

@@ -473,7 +473,9 @@ func GetInternalAddressForHosts(hostList []*Host) []string {
 
 func IsDockerSELinuxEnabled(host *Host) bool {
 	for _, securityOpt := range host.DockerInfo.SecurityOptions {
-		if securityOpt == "selinux" {
+		logrus.Tracef("IsDockerSELinuxEnabled: securityOpt found: [%s]", securityOpt)
+		// name=selinux was the value returned after removing statically set Docker API version 1.24
+		if securityOpt == "selinux" || securityOpt == "name=selinux" {
 			logrus.Debugf("Host [%s] has SELinux enabled in Docker", host.Address)
 			return true
 		}

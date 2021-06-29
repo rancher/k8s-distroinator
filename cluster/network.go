@@ -456,6 +456,9 @@ func (c *Cluster) doAciDeploy(ctx context.Context, data map[string]interface{}) 
 	}
 	podIPStart, podIPEnd := cidr.AddressRange(clusterCIDR)
 	_, staticExternalSubnet, err := net.ParseCIDR(c.Network.Options[AciStaticExternalSubnet])
+	if err != nil {
+		return err
+	}
 	staticServiceIPStart, staticServiceIPEnd := cidr.AddressRange(staticExternalSubnet)
 	_, svcGraphSubnet, err := net.ParseCIDR(c.Network.Options[AciServiceGraphSubnet])
 	if err != nil {

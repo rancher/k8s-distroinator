@@ -61,10 +61,7 @@ func (c *Cluster) DeployRestoreCerts(ctx context.Context, clusterCerts map[strin
 			return util.ErrList(errList)
 		})
 	}
-	if err := errgrp.Wait(); err != nil {
-		return err
-	}
-	return nil
+	return errgrp.Wait()
 }
 
 func (c *Cluster) DeployStateFile(ctx context.Context, stateFilePath, snapshotName string) error {
@@ -92,10 +89,7 @@ func (c *Cluster) DeployStateFile(ctx context.Context, stateFilePath, snapshotNa
 			return util.ErrList(errList)
 		})
 	}
-	if err := errgrp.Wait(); err != nil {
-		return err
-	}
-	return nil
+	return errgrp.Wait()
 }
 
 func (c *Cluster) GetStateFileFromSnapshot(ctx context.Context, snapshotName string) (string, error) {

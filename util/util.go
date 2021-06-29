@@ -20,7 +20,7 @@ const (
 	WorkerThreads = 50
 )
 
-var proxyEnvVars = [3]string{"HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY"}
+var ProxyEnvVars = [3]string{"HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY"}
 
 func StrToSemVer(version string) (*semver.Version, error) {
 	v, err := semver.NewVersion(strings.TrimPrefix(version, "v"))
@@ -146,7 +146,7 @@ func GetEnvVar(key string) (string, string, bool) {
 
 func PrintProxyEnvVars() {
 	// Print proxy related environment variables
-	for _, proxyEnvVar := range proxyEnvVars {
+	for _, proxyEnvVar := range ProxyEnvVars {
 		var err error
 		// Lookup environment variable
 		if key, value, ok := GetEnvVar(proxyEnvVar); ok {

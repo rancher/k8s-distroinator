@@ -1616,6 +1616,11 @@ func (in *RancherKubernetesEngineConfig) DeepCopyInto(out *RancherKubernetesEngi
 		*out = new(bool)
 		**out = **in
 	}
+	if in.EnableCRIDockerd != nil {
+		in, out := &in.EnableCRIDockerd, &out.EnableCRIDockerd
+		*out = new(bool)
+		**out = **in
+	}
 	if in.PrivateRegistries != nil {
 		in, out := &in.PrivateRegistries, &out.PrivateRegistries
 		*out = make([]PrivateRegistry, len(*in))

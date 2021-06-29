@@ -20,6 +20,7 @@ steps:
   - name: socket
     path: /var/run/docker.sock
 
+
 - name: stage-binaries
   pull: default
   image: rancher/dapper:1.11.2
@@ -44,6 +45,7 @@ steps:
     - "build/bin/rke_*"
     - "dist/artifacts/${DRONE_TAG}/*"
     prerelease: true
+    title: "Pre-release ${DRONE_TAG}"
   when:
     event:
     - tag
@@ -63,6 +65,7 @@ steps:
     - "dist/artifacts/${DRONE_TAG}/*"
     api_key:
       from_secret: github_token
+    title: "Release ${DRONE_TAG}"
   when:
     event:
     - tag
@@ -70,6 +73,60 @@ steps:
       exclude:
       - "refs/tags/*rc*"
       - "refs/tags/*alpha*"
+
+volumes:
+- name: socket
+  host:
+    path: /var/run/docker.sock
+
+---
+kind: pipeline
+name: test-cni
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: default
+  image: rancher/dapper:1.11.2
+  commands:
+  - dapper build
+  privileged: true
+  volumes:
+  - name: socket
+    path: /var/run/docker.sock
+
+- name: integration-flannel
+  pull: default
+  image: rancher/dapper:1.11.2
+  commands:
+  - dapper integration flannel
+  privileged: true
+  volumes:
+  - name: socket
+    path: /var/run/docker.sock
+
+- name: integration-calico
+  pull: default
+  image: rancher/dapper:1.11.2
+  commands:
+  - dapper integration calico
+  privileged: true
+  volumes:
+  - name: socket
+    path: /var/run/docker.sock
+
+- name: integration-weave
+  pull: default
+  image: rancher/dapper:1.11.2
+  commands:
+  - dapper integration weave
+  privileged: true
+  volumes:
+  - name: socket
+    path: /var/run/docker.sock
 
 volumes:
 - name: socket

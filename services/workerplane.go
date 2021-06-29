@@ -206,10 +206,7 @@ func upgradeWorkerHost(ctx context.Context, kubeClient *kubernetes.Clientset, ru
 		return err
 	}
 	// uncordon node
-	if err := k8s.CordonUncordon(kubeClient, runHost.HostnameOverride, false); err != nil {
-		return err
-	}
-	return nil
+	return k8s.CordonUncordon(kubeClient, runHost.HostnameOverride, false)
 }
 
 func doDeployWorkerPlaneHost(ctx context.Context, host *hosts.Host, localConnDialerFactory hosts.DialerFactory, prsMap map[string]v3.PrivateRegistry, processMap map[string]v3.Process, certMap map[string]pki.CertificatePKI, updateWorkersOnly bool, alpineImage string) error {

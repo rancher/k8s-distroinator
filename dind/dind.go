@@ -47,6 +47,7 @@ func StartUpDindContainer(ctx context.Context, dindAddress, dindNetwork, dindSto
 		}
 		binds := []string{
 			fmt.Sprintf("/var/lib/kubelet-%s:/var/lib/kubelet:shared", containerName),
+			"/etc/machine-id:/etc/machine-id:ro",
 		}
 		isLink, err := util.IsSymlink("/etc/resolv.conf")
 		if err != nil {

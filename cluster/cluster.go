@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"os"
 	"reflect"
 	"strings"
 	"time"
@@ -513,10 +514,7 @@ func parseIngressConfig(clusterFile string, rkeConfig *v3.RancherKubernetesEngin
 	if err := parseIngressExtraVolumes(ingressMap, rkeConfig); err != nil {
 		return err
 	}
-	if err := parseIngressExtraVolumeMounts(ingressMap, rkeConfig); err != nil {
-		return err
-	}
-	return nil
+	return parseIngressExtraVolumeMounts(ingressMap, rkeConfig)
 }
 
 func parseDaemonSetUpdateStrategy(updateStrategyField interface{}) (*v3.DaemonSetUpdateStrategy, error) {
@@ -778,6 +776,12 @@ func (c *Cluster) SetupDialers(ctx context.Context, dailersOptions hosts.Dialers
 		c.K8sWrapTransport, err = hosts.BastionHostWrapTransport(c.BastionHost)
 		if err != nil {
 			return err
+		}
+		if c.BastionHost.IgnoreProxyEnvVars {
+			logrus.Debug("Unset http proxy environment variables")
+			for _, v := range util.ProxyEnvVars {
+				os.Unsetenv(v)
+			}
 		}
 	}
 	return nil
@@ -1093,10 +1097,7 @@ func RestartClusterPods(ctx context.Context, kubeCluster *Cluster) error {
 			return util.ErrList(errList)
 		})
 	}
-	if err := errgrp.Wait(); err != nil {
-		return err
-	}
-	return nil
+	return errgrp.Wait()
 }
 
 func IsLegacyKubeAPI(ctx context.Context, kubeCluster *Cluster) (bool, error) {

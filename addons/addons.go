@@ -2,8 +2,9 @@ package addons
 
 import (
 	"fmt"
-	"k8s.io/client-go/transport"
 	"strconv"
+
+	"k8s.io/client-go/transport"
 
 	"github.com/rancher/rke/k8s"
 	"github.com/rancher/rke/templates"

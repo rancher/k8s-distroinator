@@ -7,6 +7,7 @@
 /trash.lock
 kube_config*
 /rke
+/build/bin
 .vscode
 cluster.rkestate
 cluster.yml

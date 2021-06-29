@@ -198,10 +198,7 @@ func startNewControlHost(ctx context.Context, runHost *hosts.Host, localConnDial
 	if err := doDeployControlHost(ctx, runHost, localConnDialerFactory, prsMap, cpNodePlanMap[runHost.Address].Processes, alpineImage, certMap); err != nil {
 		return err
 	}
-	if err := doDeployWorkerPlaneHost(ctx, runHost, localConnDialerFactory, prsMap, cpNodePlanMap[runHost.Address].Processes, certMap, updateWorkersOnly, alpineImage); err != nil {
-		return err
-	}
-	return nil
+	return doDeployWorkerPlaneHost(ctx, runHost, localConnDialerFactory, prsMap, cpNodePlanMap[runHost.Address].Processes, certMap, updateWorkersOnly, alpineImage)
 }
 
 func checkHostUpgradable(ctx context.Context, runHost *hosts.Host, cpNodePlanMap map[string]v3.RKEConfigNodePlan) (bool, bool, error) {
@@ -239,10 +236,7 @@ func upgradeControlHost(ctx context.Context, kubeClient *kubernetes.Clientset, h
 	if err := CheckNodeReady(kubeClient, host, ControlRole); err != nil {
 		return err
 	}
-	if err := k8s.CordonUncordon(kubeClient, host.HostnameOverride, false); err != nil {
-		return err
-	}
-	return nil
+	return k8s.CordonUncordon(kubeClient, host.HostnameOverride, false)
 }
 
 func RemoveControlPlane(ctx context.Context, controlHosts []*hosts.Host, force bool) error {

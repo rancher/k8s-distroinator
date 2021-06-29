@@ -335,11 +335,7 @@ func (c *Cluster) updateEncryptionProvider(ctx context.Context, keys []*encrypti
 	if err := c.UpdateClusterCurrentState(ctx, fullState); err != nil {
 		return err
 	}
-	if err := services.RestartKubeAPIWithHealthcheck(ctx, c.ControlPlaneHosts, c.LocalConnDialerFactory, c.Certificates); err != nil {
-		return err
-	}
-
-	return nil
+	return services.RestartKubeAPIWithHealthcheck(ctx, c.ControlPlaneHosts, c.LocalConnDialerFactory, c.Certificates)
 }
 
 func (c *Cluster) DeployEncryptionProviderFile(ctx context.Context) error {
@@ -525,7 +521,7 @@ func resolveCustomEncryptionConfig(clusterFile string) (string, *apiserverconfig
 	var r map[string]interface{}
 	err = ghodssyaml.Unmarshal([]byte(clusterFile), &r)
 	if err != nil {
-		return clusterFile, nil, fmt.Errorf("error unmarshalling: %v", err)
+		return clusterFile, nil, fmt.Errorf("error unmarshalling clusterfile: %v", err)
 	}
 	services, ok := r["services"].(map[string]interface{})
 	if services == nil || !ok {
@@ -544,6 +540,9 @@ func resolveCustomEncryptionConfig(clusterFile string) (string, *apiserverconfig
 	if ok && customConfig != nil {
 		delete(sec, "custom_config")
 		newClusterFile, err := ghodssyaml.Marshal(r)
+		if err != nil {
+			return clusterFile, nil, fmt.Errorf("error marshalling clusterfile: %v", err)
+		}
 		c, err := parseCustomConfig(customConfig)
 		return string(newClusterFile), c, err
 	}

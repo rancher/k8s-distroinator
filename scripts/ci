@@ -3,8 +3,8 @@ set -e
 
 cd $(dirname $0)
 
+./validate
 ./build
 ./test
-./validate
 ./integration
 ./package
