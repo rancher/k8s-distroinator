@@ -840,6 +840,8 @@ type AzureCloudProvider struct {
 	// Excludes master nodes (labeled with `node-role.kubernetes.io/master`) from the backend pool of Azure standard loadbalancer, default(nil) to `true`
 	// If want adding the master nodes to ALB, this should be set to `false` and remove the `node-role.kubernetes.io/master` label from master nodes
 	ExcludeMasterFromStandardLB *bool `json:"excludeMasterFromStandardLB,omitempty" yaml:"excludeMasterFromStandardLB,omitempty"`
+	// Tags to be added to shared resources: `foo=bar,bar=foo`
+	Tags string `json:"tags,omitempty" yaml:"tags,omitempty"`
 }
 
 // AWSCloudProvider options
