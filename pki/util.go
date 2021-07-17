@@ -217,7 +217,9 @@ func (c *CertificatePKI) ToEnv() []string {
 	if c.Key != nil {
 		env = append(env, c.KeyToEnv())
 	}
-	if c.Certificate != nil {
+	if len(c.CertificatePEM) > 0 {
+		env = append(env, fmt.Sprintf("%s=%s", c.EnvName, c.CertificatePEM))
+	} else if c.Certificate != nil {
 		env = append(env, c.CertToEnv())
 	}
 	if c.Config != "" && c.ConfigEnvName != "" {
@@ -287,6 +289,10 @@ func GetConfigTempPath(name string) string {
 }
 
 func ToCertObject(componentName, commonName, ouName string, certificate *x509.Certificate, key *rsa.PrivateKey, csrASN1 []byte) CertificatePKI {
+	return ToCertObjectWithCertPEM(componentName, commonName, ouName, certificate, key, csrASN1, "")
+}
+
+func ToCertObjectWithCertPEM(componentName, commonName, ouName string, certificate *x509.Certificate, key *rsa.PrivateKey, csrASN1 []byte, certPEM string) CertificatePKI {
 	var config, configPath, configEnvName, certificatePEM, keyPEM string
 	var csr *x509.CertificateRequest
 	var csrPEM []byte
@@ -299,7 +305,9 @@ func ToCertObject(componentName, commonName, ouName string, certificate *x509.Ce
 	caCertPath := GetCertPath(CACertName)
 	path := GetCertPath(componentName)
 	keyPath := GetKeyPath(componentName)
-	if certificate != nil {
+	if len(certPEM) > 0 {
+		certificatePEM = certPEM
+	} else if certificate != nil {
 		certificatePEM = string(cert.EncodeCertPEM(certificate))
 	}
 	if key != nil {
@@ -599,7 +607,7 @@ func ReadCertsAndKeysFromDir(certDir string) (map[string]CertificatePKI, error) 
 		logrus.Debugf("[certificates] reading file %s from directory [%s]", file.Name(), certDir)
 		if strings.HasSuffix(file.Name(), ".pem") && !strings.HasSuffix(file.Name(), "-key.pem") && !strings.HasSuffix(file.Name(), "-csr.pem") {
 			// fetching cert
-			cert, err := getCertFromFile(certDir, file.Name())
+			certs, err := getCertsFromFile(certDir, file.Name())
 			if err != nil {
 				return nil, err
 			}
@@ -609,7 +617,9 @@ func ReadCertsAndKeysFromDir(certDir string) (map[string]CertificatePKI, error) 
 			if err != nil {
 				return nil, err
 			}
-			certMap[certName] = ToCertObject(certName, getCommonName(certName), getOUName(certName), cert, key, nil)
+			firstCert := certs[0]
+			certPEM := cert.EncodeCertsPEM(certs)
+			certMap[certName] = ToCertObjectWithCertPEM(certName, getCommonName(certName), getOUName(certName), firstCert, key, nil, string(certPEM))
 		}
 	}
 
@@ -636,8 +646,7 @@ func getOUName(certName string) string {
 	}
 }
 
-func getCertFromFile(certDir string, fileName string) (*x509.Certificate, error) {
-	var certificate *x509.Certificate
+func getCertsFromFile(certDir string, fileName string) ([]*x509.Certificate, error) {
 	certPEM, _ := ioutil.ReadFile(filepath.Join(certDir, fileName))
 	if len(certPEM) > 0 {
 		logrus.Debugf("Certificate file [%s/%s] content is greater than 0", certDir, fileName)
@@ -645,9 +654,9 @@ func getCertFromFile(certDir string, fileName string) (*x509.Certificate, error)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read certificate [%s]: %v", fileName, err)
 		}
-		certificate = certificates[0]
+		return certificates, nil
 	}
-	return certificate, nil
+	return nil, nil
 }
 
 func getKeyFromFile(certDir string, fileName string) (*rsa.PrivateKey, error) {

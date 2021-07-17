@@ -23,6 +23,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 const (
@@ -62,13 +63,22 @@ func EncodePrivateKeyPEM(key *rsa.PrivateKey) []byte {
 	return pem.EncodeToMemory(&block)
 }
 
-// EncodeCertPEM returns PEM-endcoded certificate data
+// EncodeCertPEM returns PEM-encoded certificate data
 func EncodeCertPEM(cert *x509.Certificate) []byte {
 	block := pem.Block{
 		Type:  CertificateBlockType,
 		Bytes: cert.Raw,
 	}
 	return pem.EncodeToMemory(&block)
+}
+
+// EncodeCertsPEM returns PEM-encoded certificate data for multiple certs
+func EncodeCertsPEM(certs []*x509.Certificate) string {
+	var pemList []string
+	for _, c := range certs {
+		pemList = append(pemList, string(EncodeCertPEM(c)))
+	}
+	return strings.Join(pemList, "\n")
 }
 
 // ParsePrivateKeyPEM returns a private key parsed from a PEM block in the supplied data.
