@@ -776,7 +776,7 @@ type AzureCloudProvider struct {
 	// The name of the security group attached to the cluster's subnet
 	SecurityGroupName string `json:"securityGroupName" yaml:"securityGroupName"`
 	// The name of the resource group that the security group is deployed in
-	SecurityGroupResourceGroup string `json:"securityGroupResourceGroup" yaml:"securityGroupResourceGroup"`
+	SecurityGroupResourceGroup string `json:"securityGroupResourceGroup,omitempty" yaml:"securityGroupResourceGroup,omitempty"`
 	// (Optional in 1.6) The name of the route table attached to the subnet that the cluster is deployed in
 	RouteTableName string `json:"routeTableName" yaml:"routeTableName"`
 	// (Optional) The name of the availability set that should be used as the load balancer backend
